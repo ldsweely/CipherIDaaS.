@@ -43,6 +43,7 @@ public class LoginInterCeptor implements HandlerInterceptor {
         uriSet.add("/cipher/checkpwd");
         uriSet.add("/cipher/ssoLogin/createToeken");
         uriSet.add("/cipher/ssoLogin/checkToken");
+        uriSet.add("/cipher/user/createAdmin");
     }
 
 

@@ -167,6 +167,28 @@
     <delete id="deleteUserApplication">
      delete from cipher_user_application_map where user_id=#{userId}
     </delete>
+    <insert id="insertUser">
+        INSERT INTO cipher_user_info
+        (uuid,
+         company_id,
+         account_number,
+         user_name,
+         mail,
+         is_admin,
+         phone_number,
+         create_time,
+         modify_time)
+        VALUES
+        (#{uuid},
+         #{companyUuid} ,
+         #{phone} ,
+         #{userName},
+         #{email},
+         "1",
+         #{phone},
+         NOW(),
+         NOW())
+    </insert>
 
 
 </mapper>

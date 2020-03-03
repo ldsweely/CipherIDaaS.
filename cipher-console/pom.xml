@@ -362,6 +362,17 @@
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
         </dependency>
+        <!--阿里云签名机制-->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>3.7.110.ALL</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.60</version>
+        </dependency>
 
     </dependencies>
 

@@ -238,6 +238,38 @@ public class RegisterApprovalServiceImpl implements RegisterApprovalService {
         return NewReturnUtils.successResponse(ReturnMsg.APPROVALSUCCESS);
     }
 
+    @Override
+    public Map<String, Object> createAdminUser(AdminUser adminUser) {
+        //判断账号是否重复
+        Integer flag = checkUserService.checkUserInfo(adminUser.getCompanyUuid(), adminUser.getPhone(), adminUser.getEmail(), adminUser.getPhone());
+        if(flag.equals(1)){
+            return NewReturnUtils.failureResponse(ReturnMsg.CHECKUSERACCOUNTNUMBER);
+        }else if(flag.equals(2)){
+            return NewReturnUtils.failureResponse(ReturnMsg.CHECKUSERMAIL);
+        }else if(flag.equals(3)){
+            return NewReturnUtils.failureResponse(ReturnMsg.CHECKUSERTELEPHONE);
+        }else{
+            registerApprovalMapper.insertUser(adminUser);
+            //向密码表添加一条密码
+            String password = "123456";
+            String encryptPassword = AES.encryptToBase64(password, AesKey.AES_KEY);
+            registerApprovalMapper.insertRegisterPwd(adminUser.getUuid(), adminUser.getPhone(), encryptPassword);
+            //添加到根节点
+            GroupUserMapDomain groupUserMapDomain=new GroupUserMapDomain();
+            groupUserMapDomain.setUserId(adminUser.getUuid());
+            groupUserMapDomain.setGroupId(0);
+            userGroupMapper.insertUserGroupMap(groupUserMapDomain);
+            //发送邮件
+            EmailAccountInfoDomain emailAccountInfoDomain = new EmailAccountInfoDomain();
+            emailAccountInfoDomain.setCompanyId(adminUser.getCompanyUuid());
+            emailAccountInfoDomain.setMail(adminUser.getEmail());
+            emailAccountInfoDomain.setAccount(adminUser.getPhone());
+            emailAccountInfoDomain.setPassword(password);
+            jmsProducer.sendMessage(emailAccountInfoDomain,JMSType.EMAIL_SEND_INFORM);
+        }
+        return  NewReturnUtils.successResponse(ReturnMsg.APPROVALSUCCESS);
+    }
+
     public void modifyApproval(String companyUuid, String uuid, Integer status){
         if(StringUtils.isNotEmpty(companyUuid)&&StringUtils.isNotEmpty(uuid)&&status>0){
             try {

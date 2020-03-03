@@ -86,6 +86,7 @@ public class OidcNewSysInterceptor implements HandlerInterceptor {
         uriSet.add("/cipher/obtain/copyright");
         uriSet.add("/cipher/equipBehavior/exportExcle");
         uriSet.add("/cipher/saml/metadata");
+        uriSet.add("/cipher/user/createAdmin");
 
     }
 

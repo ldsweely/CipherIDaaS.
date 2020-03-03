@@ -32,7 +32,9 @@ public enum ResultCode {
 
     STRATEGY_VISITOR_NEED_SCAN_INFO_ERROR(14,"被访人协助扫码开关状态异常"),
 
-    STRATEGY_MAC_DEVICE_BINDING_ERROR(15,"MAC绑定设备数量信息错误");
+    STRATEGY_MAC_DEVICE_BINDING_ERROR(15,"MAC绑定设备数量信息错误"),
+
+    TOKEN_CHECKED_FAILD(16,"Token校验失败");
 
 
 

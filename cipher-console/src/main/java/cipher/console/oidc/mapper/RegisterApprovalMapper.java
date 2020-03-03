@@ -18,6 +18,8 @@ public interface RegisterApprovalMapper {
     void ApprovalResult(@Param(value = "companyUuid") String companyUuid,@Param(value = "uuid")String uuid,@Param(value = "status") Integer status) throws Exception;
     //在用户表中添加用户信息
     void insertRegisterUser(RegisterUserInfo registerUserInfo);
+    //向用户表添加管理员用户信息
+    void insertUser(AdminUser adminUser);
     //在密码表添加用户密码
     void insertRegisterPwd(@Param(value = "userId") String userId,@Param(value = "accountNumber")String accountNumber,@Param(value = "password")String password);
 

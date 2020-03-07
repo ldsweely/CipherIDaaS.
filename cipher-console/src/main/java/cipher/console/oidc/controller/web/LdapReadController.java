@@ -184,7 +184,6 @@ public class LdapReadController {
      * @param response
      * @return
      */
-    @CheckToken
     @RequestMapping(value = "/list", params = "json", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> queryDataInfo(HttpServletResponse response, HttpServletRequest request,

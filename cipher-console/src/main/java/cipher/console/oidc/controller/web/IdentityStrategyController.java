@@ -159,6 +159,7 @@ public class IdentityStrategyController {
     public void add(HttpServletResponse response, HttpServletRequest request, IdentityStrategyDomain identityStrategyDomain,
                     SecondAuthStrategyDomain secondAuthStrategyDomain, HttpSession session) {
         String companyUUid = sessionService.getCompanyUUid(request.getSession());
+        identityStrategyDomain.setCompanyUuid(companyUUid);
         IdentityStrategyDomain record = identityStrategyService.queryIdentityStrategyById(identityStrategyDomain);
         if (secondAuthStrategyDomain != null && StringUtils.isNotEmpty(companyUUid)) {
             Gson gson = new Gson();

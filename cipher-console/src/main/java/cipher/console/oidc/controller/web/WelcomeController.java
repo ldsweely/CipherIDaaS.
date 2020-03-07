@@ -25,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,14 +73,8 @@ public class WelcomeController {
     @RequestMapping(value = "/draw", method = RequestMethod.POST)
     @ResponseBody
     @SuppressWarnings("unchecked")
-    public Map<String, Object> getDrawData(HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> getDrawData( @RequestParam(value = "companyUUid") String companyId,HttpServletRequest request, HttpServletResponse response) {
         LOGGER.debug("enter WelcomeController.getDrawData;");
-        UserInfoDomain user=getUserInfoByToken(request);
-        String companyId="";
-        if(null!=user){
-             companyId=user.getCompanyId();
-        }
-        Map<String, Object> map = null;
         ApplicationInfo form = new ApplicationInfo();
         DataGridModel pageModel = new DataGridModel();
         form.setCompanyId(companyId);
@@ -115,9 +110,9 @@ public class WelcomeController {
 
     @RequestMapping(value = "/userInfo", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> getUserCount(HttpServletRequest request, HttpSession session,DataGridModel page) {
+    public Map<String, Object> getUserCount(HttpServletRequest request, @RequestParam(value = "companyUUid") String companyId, DataGridModel page
+    ) {
         UserInfoDomain user=getUserInfoByToken(request);
-        String companyId="";
         String uuid="";
         if(null!=user) {
              companyId = user.getCompanyId();

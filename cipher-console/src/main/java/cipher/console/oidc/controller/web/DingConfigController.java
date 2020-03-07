@@ -70,9 +70,7 @@ public class DingConfigController {
      */
     @RequestMapping(value = "/getBaseConfig")
     public DingConfigDomain getConfig(HttpServletResponse response, HttpSession session) {
-//        String companyId = "123456";
         return dingConfigService.queryConfig(sessionService.getCompanyUUid(session));
-//        return dingConfigService.queryConfig(companyId);
     }
 
 

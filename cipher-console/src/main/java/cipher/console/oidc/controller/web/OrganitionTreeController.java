@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,10 +55,8 @@ public class OrganitionTreeController {
     * */
     @RequestMapping(value = "/list")
     @ResponseBody
-    public List<TreeNodesDomain> queryData(HttpServletRequest request) {
+    public List<TreeNodesDomain> queryData(HttpServletRequest request, @RequestParam(value = "companyUUid") String companyId) {
         long start =System.currentTimeMillis();
-        String companyId= ConstantsCMP.getSessionCompanyId(request);
-       // String companyId="123456";
         logger.debug("Enter OrganitionTreeController.queryData param:"+ companyId);
         Object obj = redisClient.get(CacheKey.getCacheOrganitionTreeList(companyId));
         long middle=System.currentTimeMillis();
@@ -88,20 +87,11 @@ public class OrganitionTreeController {
     @ResponseBody
     public List<TreeNodesDomain> queryGroupListByGroupId(Integer groupId,HttpServletRequest request) {
         String companyId= ConstantsCMP.getSessionCompanyId(request);
-      //  String companyId="123456";
         List<TreeNodesDomain> list=new ArrayList<>();
         List<TreeNodesDomain> groupList=groupService.getGroupListByParentId(companyId,groupId);
-
-
-
-
-
-
         if(null!=groupList&&groupList.size()>0) {
             for (TreeNodesDomain treeNodesDomain : groupList) {
                 treeNodesDomain.setHref("/cipher/newUser/userlist?json");
-              //  treeNodesDomain.setPath(path);
-              //  treeNodesDomain.setIcon(idPath);
             }
             list.addAll(groupList);
         }
@@ -110,7 +100,6 @@ public class OrganitionTreeController {
         if(null!=userList&&userList.size()>0){
             for(TreeNodesDomain treeNodesDomain:userList){
                 treeNodesDomain.setHref("/cipher/newUser/getlist?json");
-               // treeNodesDomain.setPath(path);
             }
             list.addAll(userList);
         }

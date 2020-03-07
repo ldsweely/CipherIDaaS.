@@ -1,11 +1,13 @@
 package cipher.console.oidc.domain.web;
 
+import cipher.console.oidc.domain.BaseParamDomain;
+
 import java.io.Serializable;
 
 /**
  * Created by 95744 on 2018/8/23.
  */
-public class SmsInfoDomain  implements Serializable {
+public class SmsInfoDomain  extends BaseParamDomain{
 
     private Integer id;
     private String name;

@@ -20,7 +20,7 @@
             </if>
             modify_time=NOW()
         </set>
-        where id = #{id}
+        where company_id = #{companyId}
     </update>
 
     <select id="getLoginFailInfo" resultType="cipher.console.oidc.domain.web.LoginFailInfo">

@@ -81,9 +81,11 @@ public class SmsController {
      */
     @RequestMapping(value = "/list", params = "json", method = RequestMethod.POST)
     @ResponseBody
-    public SmsInfoDomain queryDataInfo(HttpServletResponse response) {
+    public SmsInfoDomain queryDataInfo(HttpServletRequest request) {
         logger.debug("enter SmsController.queryDataInfo");
         SmsInfoDomain smsInfoDomain = new SmsInfoDomain();
+        String companyUuid = sessionService.getCompanyUUid(request.getSession());
+        smsInfoDomain.setCompanyId(companyUuid);
         return smsInfoService.getSmsInfo(smsInfoDomain);
     }
 
@@ -92,6 +94,8 @@ public class SmsController {
     public void insertSmsInfo(HttpServletResponse response, HttpServletRequest request, HttpSession session, SmsInfoDomain form) {
         logger.debug("enter SmsController.insertSmsInfo");
         SmsInfoDomain smsInfoDomain = smsInfoService.getSmsInfo(form);
+        String companyUuid = sessionService.getCompanyUUid(request.getSession());
+        form.setCompanyId(companyUuid);
         try {
             AdminBehaviorInfo adminBehaviorInfo = new AdminBehaviorInfo(AdminBehaviorEnum.SYSTEM_MANAGER.getType(),  "更新短信设置");
             adminBehaviorInfoService.insertSelective(adminBehaviorInfo,session);
@@ -127,10 +131,13 @@ public class SmsController {
 
     @RequestMapping(value = "/listNew", params = "json", method = RequestMethod.POST)
     @ResponseBody
-    public SmsChannelInfo queryDataInfoNew(HttpServletResponse response, SmsChannelInfo smsChannelInfo) {
+    public SmsChannelInfo queryDataInfoNew(HttpServletRequest request, SmsChannelInfo smsChannelInfo) {
         logger.debug("enter SmsController.queryDataInfoNew");
+        String companyUuid = sessionService.getCompanyUUid(request.getSession());
+        smsChannelInfo.setCompanyId(companyUuid);
         if (null == smsChannelInfo.getType()) {
             SmsChannelInfo record = new SmsChannelInfo();
+            record.setCompanyId(companyUuid);
             smsChannelInfo = smsChannelInfoService.getSmsChannelInfo(record);
         } else {
             smsChannelInfo = smsChannelInfoService.selectSmsChannel(smsChannelInfo);
@@ -155,20 +162,20 @@ public class SmsController {
         redisClient.remove(CACHE_KEY_RONG_LIAN_INFO);
         SmsChannelInfo smsChannelInfo = smsChannelInfoService.getSmsChannelInfo(form);
         try {
-            String userName = ConstantsCMP.getCipherUuidInfo(request);
             String companyId=ConstantsCMP.getSessionCompanyId(request);
             AdminBehaviorInfo adminBehaviorInfo = new AdminBehaviorInfo(AdminBehaviorEnum.SYSTEM_MANAGER.getType(),  "更新短信设置");
             adminBehaviorInfoService.insertSelective(adminBehaviorInfo,session);
+
+            form.setCompanyId(companyId);
             if (ObjectUtils.isEmpty(smsChannelInfo)) {
                 smsChannelInfoService.insertSmsChannelInfo(form);
                 ResponseUtils.customSuccessResponse(response, "保存配置信息成功");
             } else {
                 form.setState(ConstantsCMP.SmsConstant.IS_CLOSE);
-                form.setCompanyId(Integer.valueOf(companyId));
                 smsChannelInfoService.updateByKey(form);
                 smsChannelInfo = smsChannelInfoService.selectSmsChannel(form);
                 SmsChannelInfo record = new SmsChannelInfo();
-                record.setCompanyId(Integer.valueOf(companyId));
+                record.setCompanyId(companyId);
                 JSONObject jsonvistor;
                 if (smsChannelInfo.getType() == 1) {
                     jsonvistor = JSONObject.fromObject(ronglianSmsConfigInfo);//将java对象转换为json对象
@@ -196,7 +203,7 @@ public class SmsController {
         logger.debug("enter SmsController.getList");
         String companyId = ConstantsCMP.getSessionCompanyId(request);
         SmsChannelInfo smsChannelInfo = new SmsChannelInfo();
-        smsChannelInfo.setCompanyId(Integer.valueOf(companyId));
+        smsChannelInfo.setCompanyId(companyId);
         return smsChannelInfoService.getSmsChannelList(smsChannelInfo);
     }
 
@@ -211,8 +218,8 @@ public class SmsController {
     @ResponseBody
     public void sendMsg(HttpServletRequest request,HttpServletResponse response, @RequestParam(value = "telephone") String telephone) {
         logger.debug("enter SmsController.sendMsg");
-      // String companyId = sessionService.getCompanyUUid(request.getSession());
-        String companyId ="123456";
+       String companyId = sessionService.getCompanyUUid(request.getSession());
+
         //发送短信
         try {
             SmsCodeInfoDomain smsCodeInfoDomain = new SmsCodeInfoDomain(telephone,companyId);

@@ -286,7 +286,6 @@ public class UserMsgInfoController {
                                           @RequestParam(value = "uuid", required = false) String uuid
     ) {
         String companyId = ConstantsCMP.getSessionCompanyId(request);
-        //String companyId = "123456";
         Map<String, Object> map = new HashMap<>();
         GroupInfoDomain groupInfoDomain = null;
         if (StringUtils.isEmpty(groupId)) {

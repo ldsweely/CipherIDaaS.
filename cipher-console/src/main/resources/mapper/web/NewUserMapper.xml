@@ -20,6 +20,7 @@
         user_name AS userName
         from cipher_user_info mm
         where 1=1 and mm.is_delete=0 and mm.account_authorized_date is null and mm.account_authorized_valid_date is null
+        and mm.company_id=#{companyId}
         <if test="queryName!=null and queryName!=''">
             and (user_name LIKE CONCAT(CONCAT('%',#{queryName}),'%') OR
             account_number LIKE CONCAT(CONCAT('%',#{queryName}),'%'))
@@ -172,6 +173,7 @@
         right join cipher_group_user_map mm on tt.uuid=mm.user_id
         LEFT JOIN cipher_group_info nn on mm.group_id=nn.group_id
         where 1=1 and tt.is_delete=0 and tt.account_authorized_date is null and tt.account_authorized_valid_date is null
+        and tt.company_id=#{companyId}
         <if test="type==1">
             <if test="queryType==1">
                 <choose>

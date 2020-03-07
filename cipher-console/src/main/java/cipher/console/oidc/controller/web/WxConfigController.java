@@ -54,7 +54,7 @@ public class WxConfigController {
      */
     @RequestMapping(value = "/baseConfig")
     public Map<String, Object> addOrEditConfig(HttpServletResponse response, WxConfigDomain form, HttpSession session) {
-     //   form.setCompanyUUid(sessionService.getCompanyUUid(session));
+        form.setCompanyUUid(sessionService.getCompanyUUid(session));
         AdminBehaviorInfo record = new AdminBehaviorInfo(AdminBehaviorEnum.SYSTEM_MANAGER.getType(),"添加或修改企业微信配置信息");
         adminBehaviorInfoService.insertSelective(record,session);
         return wxConfigService.insertOrUpdateBaseConfig(form);

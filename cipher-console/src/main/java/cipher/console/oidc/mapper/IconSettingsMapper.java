@@ -19,6 +19,6 @@ public interface IconSettingsMapper {
     void insertTitleTag(IconSettingsDomain iconSettingsDomain) throws Exception;
     void updateTitleTag(IconSettingsDomain iconSettingsDomain) throws Exception;
 
-    String obtailCopyright();
+    String obtailCopyright(@Param(value = "companyUuid") String companyUuid);
 
 }

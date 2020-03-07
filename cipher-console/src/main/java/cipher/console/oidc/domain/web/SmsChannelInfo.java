@@ -1,15 +1,17 @@
 package cipher.console.oidc.domain.web;
 
+import cipher.console.oidc.domain.BaseParamDomain;
+
 import java.util.Date;
 
-public class SmsChannelInfo {
+public class SmsChannelInfo extends BaseParamDomain{
     private Integer id;
 
     private String name;
 
     private Integer state;
 
-    private Integer companyId;
+    private String companyId;
 
     private Integer type;
 
@@ -66,11 +68,13 @@ public class SmsChannelInfo {
         this.state = state;
     }
 
-    public Integer getCompanyId() {
+    @Override
+    public String getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(Integer companyId) {
+    @Override
+    public void setCompanyId(String companyId) {
         this.companyId = companyId;
     }
 

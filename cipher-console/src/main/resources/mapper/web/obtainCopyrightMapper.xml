@@ -3,6 +3,6 @@
 
 <mapper namespace="cipher.console.oidc.mapper.ObtainCopyrightMapper">
       <select id="getCopyright" resultType="string">
-             SELECT copyright FROM cipher_company_copyRight WHERE id=1
+             SELECT copyright FROM cipher_company_copyRight WHERE company_id=#{companyUuid}
       </select>
 </mapper>

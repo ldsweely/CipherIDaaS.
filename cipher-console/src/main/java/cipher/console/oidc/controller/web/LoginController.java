@@ -86,7 +86,7 @@ public class LoginController {
     @ResponseBody
     public Map<String, Object> checkUser(@RequestParam(value = "userName") String userName,
                                          @RequestParam(value = "pwd") String pwd,
-                                         @RequestParam(value = "companyId",required = false,defaultValue = "123456") String companyId,
+                                         @RequestParam(value = "companyUUid") String companyId,
                                          HttpServletResponse response,HttpServletRequest request,
                                          HttpSession session) {
         Map<String, Object> map = new HashMap<>();
@@ -107,7 +107,6 @@ public class LoginController {
             map.put("return_msg", "密码错误");
             return map;
         }
-        logger.info("user----------"+domain.toString());
         session.setAttribute(ConstantsCMP.CIPHER_UUID_INFO, domain.getUuid());
         session.setAttribute(ConstantsCMP.CIPHER_CONSOLE_COMPANY_SESSION_INFO,companyId);
         session.setAttribute(ConstantsCMP.CIPHER_CONSOLE_USER_SESSION_INFO,domain);
@@ -117,7 +116,6 @@ public class LoginController {
         UserSessionResp userSessionResp =sessionService.setUserLoginInfo(domain.getUuid());
         response.setHeader("ticket",userSessionResp.getTicket());
         redisClient.put(CacheKey.getCacheKeyCipherConsoleUserInfo(uuid),userSessionResp.getTicket());
-       //CookieUtils.writeCookie(request,response,ConstantsCMP.CONSOLE_USER_COOKIE,uuid);
         map.put("return_code", ConstantsCMP.Code.SUCCESS);
         map.put("return_msg", "登录成功");
         return map;

@@ -76,7 +76,6 @@ public class LoginFailController {
         logger.debug("enter LoginFailController.updateLoginFailInfo form" + form.toString());
         LoginFailInfo loginFailInfo =  loginFailService.getLoginFailInfo(form);
         try {
-            String userName = ConstantsCMP.getSessionUser(request);
             AdminBehaviorInfo adminBehaviorInfo = new AdminBehaviorInfo(AdminBehaviorEnum.STRATEGY_MAINTENANCE.getType(),  "更新登录失败控制");
             adminBehaviorInfoService.insertSelective(adminBehaviorInfo,session);
         } catch (Exception e) {

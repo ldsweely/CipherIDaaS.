@@ -143,6 +143,7 @@ public class GroupServiceImpl implements GroupService {
         GroupInfoDomain groupInfoDomain=new GroupInfoDomain();
         groupInfoDomain.setGroupName("无部门");
         groupInfoDomain.setGroupId(0);
+        groupInfoDomain.setCompanyId(companyId);
         groupList.add(groupInfoDomain);
         return groupList;
 

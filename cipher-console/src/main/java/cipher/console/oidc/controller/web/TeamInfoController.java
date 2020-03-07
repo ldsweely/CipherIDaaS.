@@ -372,8 +372,7 @@ public class TeamInfoController {
     @RequestMapping(value = "/getUser", method = RequestMethod.POST)
     @ResponseBody
     public Map<String,Object> queryData(String id,HttpServletRequest request) {
-      // String companyId=ConstantsCMP.getSessionCompanyId(request);
-        String companyId="123456";
+        String companyId=ConstantsCMP.getSessionCompanyId(request);
         Map<String,Object> map=new HashMap<>();
         Map<String,Object> msg=new HashMap<>();
         try{
@@ -510,9 +509,10 @@ public class TeamInfoController {
 
     @RequestMapping(value = "/addRule", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> addRule(TeamInfo form) {
+    public Map<String, Object> addRule(TeamInfo form,HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         try {
+            String companyId=ConstantsCMP.getSessionCompanyId(request);
             teamInfoService.updateByPrimaryKeySelective(form);
             List<NewUserInfo> list = new ArrayList<>();
             List<RuleInfo> ruleInfoList = null;
@@ -527,6 +527,7 @@ public class TeamInfoController {
                 newUserInfo.setType(ruleInfo.getConditionName());
                 newUserInfo.setQueryType(ruleInfo.getCondition());
                 newUserInfo.setQueryName(ruleInfo.getParamName());
+                newUserInfo.setCompanyId(companyId);
                 List<NewUserInfo> newUserInfoList = newUserService.queryUserList(newUserInfo);
                 // System.out.println(newUserInfoList);
                 if (form.getType() == 1) {

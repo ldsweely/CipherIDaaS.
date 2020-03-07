@@ -110,12 +110,12 @@ public class GroupController {
             @RequestParam(value = "groupName") String groupName,
             @RequestParam(value = "description", required = false, defaultValue = "") String description,
             @RequestParam(value = "parentGroupId", required = false, defaultValue = "") Integer parentGroupId,
+            @RequestParam(value = "companyUUid") String companyId,
             HttpServletRequest request,HttpSession session) {
         if (logger.isDebugEnabled()) {
             logger.debug("turn to /group/adding/submit on the groupAddingSubmit groupName=[{}],description=[{}]",
                     new Object[]{groupName, description});
         }
-        String companyId = ConstantsCMP.getSessionCompanyId(request);
         redisClient.remove(CacheKey.getCacheOrganitionTreeList(companyId));
         redisClient.remove(CacheKey.getCacheGroupTreeList(companyId));
         Map<String, Object> map = new HashMap<>();
@@ -239,17 +239,17 @@ public class GroupController {
     /**
      * 编辑部门时，该部门下的子部门不能作为父部门
      *
-     * @param request
+     * @param
      * @return
      **/
     @RequestMapping(value = "/commons")
     @ResponseBody
-    public List<GroupInfoDomain> queryGroupByCompanyId(@Param(value = "groupId") Integer groupId, HttpServletRequest request) {
+    public List<GroupInfoDomain> queryGroupByCompanyId(@Param(value = "groupId") Integer groupId,
+                                                       @RequestParam(value = "companyUUid") String companyUUid) {
         //去掉子部门后
         List<GroupInfoDomain> childGroupList = new ArrayList<>();
         if(groupId.intValue()>0){
-            String companyId = ConstantsCMP.getSessionCompanyId(request);
-            List<GroupInfoDomain> groupInfoDomains = groupService.queryGroupSelect(companyId);
+            List<GroupInfoDomain> groupInfoDomains = groupService.queryGroupSelect(companyUUid);
             //该节点下的子部门
             List<GroupInfoDomain> childGroupInfoDomain = addChildGroup(groupInfoDomains, groupId);
             //加入当前节点

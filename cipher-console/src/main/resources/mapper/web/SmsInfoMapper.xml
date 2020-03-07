@@ -3,7 +3,7 @@
 <mapper namespace="cipher.console.oidc.mapper.SmsInfoMapper">
 
     <select id="getSmsInfo" resultType="cipher.console.oidc.domain.web.SmsInfoDomain" parameterType="cipher.console.oidc.domain.web.SmsInfoDomain">
-        select * from cipher_sms_config
+        select * from cipher_sms_config where company_uuid=#{companyId}
     </select>
 
     <update id="updateSmsInfo" parameterType="cipher.console.oidc.domain.web.SmsInfoDomain">
@@ -44,7 +44,7 @@
             </if>
             modify_time=NOW()
         </set>
-        where id = #{id}
+        where id = #{id} and company_uuid=#{companyId}
     </update>
 
 
@@ -84,6 +84,9 @@
             <if test="extendTime != null">
                 extend_time,
             </if>
+            <if test="companyId != null">
+                company_id,
+            </if>
             create_time,
             modify_time
         </trim>
@@ -120,6 +123,9 @@
             </if>
             <if test="extendTime != null">
                 #{extendTime},
+            </if>
+            <if test="companyId != null">
+                #{companyId},
             </if>
             NOW(),
             NOW()

@@ -39,7 +39,7 @@ public class ObtainCopyrightController {
     public Map<String,Object> getCopyright(HttpServletRequest request,@RequestParam(value = "companyUUid") String companyUUid){
         //String companyUUid = sessionService.getCompanyUUid(request.getSession());
         Map<String,Object> map = new HashMap<>();
-        String copyright = obtainCopyrightService.getCopyright();
+        String copyright = obtainCopyrightService.getCopyright(companyUUid);
         IconSettingsDomain iconSettingsDomain = iconSettingsMapper.selectIconSettingsByCompanyUuid(companyUUid, 4);
         map = NewReturnUtils.successResponse("公司版权文案获取成功");
         map.put("copyright", copyright);

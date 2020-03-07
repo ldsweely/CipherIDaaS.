@@ -12,7 +12,7 @@ public class ObtainCopyrightServiceImpl implements ObtainCopyrightService {
     private ObtainCopyrightMapper obtainCopyrightMapper;
 
     @Override
-    public String getCopyright() {
-        return obtainCopyrightMapper.getCopyright();
+    public String getCopyright(String companyUuid) {
+        return obtainCopyrightMapper.getCopyright(companyUuid);
     }
 }

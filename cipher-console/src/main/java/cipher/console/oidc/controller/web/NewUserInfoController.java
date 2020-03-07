@@ -139,9 +139,8 @@ public class NewUserInfoController {
    // @CheckToken
     @RequestMapping(value = "/getlist", params = "json")
     @ResponseBody
-    public Map<String, Object> queryData(HttpServletRequest request, DataGridModel pageModel, NewUserInfo form) {
-        String companyId=ConstantsCMP.getSessionCompanyId(request);
-        form.setCompanyId(companyId);
+    public Map<String, Object> queryData(@RequestParam(value = "companyUUid") String companyUUid,HttpServletRequest request, DataGridModel pageModel, NewUserInfo form) {
+        form.setCompanyId(companyUUid);
         if (logger.isDebugEnabled()) {
             logger.debug("turn to add on the NewUserInfoController.queryData, form", new Object[]{form.toString()});
         }

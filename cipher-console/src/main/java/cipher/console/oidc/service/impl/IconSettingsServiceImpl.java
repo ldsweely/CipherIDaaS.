@@ -157,7 +157,7 @@ public class IconSettingsServiceImpl implements IconSettingsService {
         Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(companyUuid)) {
             IconSettingsDomain iconSettingsDomain = iconSettingsMapper.selectIconSettingsByCompanyUuid(companyUuid, 1);
-            String copyright = iconSettingsMapper.obtailCopyright();
+            String copyright = iconSettingsMapper.obtailCopyright(companyUuid);
             if (iconSettingsDomain != null) {
                 map = NewReturnUtils.successResponse(ReturnMsg.getManagePageMsg(4));
                 map.put("return_result", iconSettingsDomain);

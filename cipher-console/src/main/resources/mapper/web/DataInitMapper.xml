@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cipher.console.oidc.mapper.DataInitMapper">
+
+
+    <insert id="dingDingConfigInitData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cipher_ding_config_info (companyUUid, scan_app_id, scan_app_secret, corp_id, corp_secret, app_key,
+                                             app_secret, attr_map, match_rule, sync_config, create_time, modify_time)
+            VALUES (#{companyUUid}, 'dingoa8jgq8xffnrhk9rge',
+                    'ES2Sb4xWT58Nca2M7A8K9WPNMWcHe36KOQ8UjH9l2rY0tnpv75yHLGf-5HYFg21u',
+                    'ding832de0a4f88d8f5c35c2f4657eb6378f', '', 'dingsyioqlom4xouulms',
+                    'vCDayVvf6ICLyc3dGuxlV4qUf7L-PLxYifikSOW1CeTErQjwL4StqIKU5GHP6XQ1',
+                    '[{"localKey":"accountNumber","dingKey":"mobile"},{"localKey":"userName","dingKey":"name"},{"localKey":"mail","dingKey":"email"},{"localKey":"phoneNumber","dingKey":"mobile"},{"localKey":"job","dingKey":"position"},{"localKey":"jobNumber","dingKey":"jobNumber"}]',
+                    3, '{"isAutoSync":1,"autoSyncDate":"00:00:00","interval":3}', now(),
+                    now());
+
+    </insert>
+    <insert id="dingConfigAppInitData" parameterType="cipher.console.oidc.domain.datainit.DingscanInitInfo">
+        INSERT INTO cipher_ding_scan_app_info (company_id, config_id, application_name, application, scan_app_id,
+                                               scan_app_secret, callback_url, auth_url, create_time, modify_time)
+            VALUES (#{companyUUid}, #{configId}, '管理后台', 'console',
+                    'dingoa1mlmutpnhplahfbc', 'ES2Sb4xWT58Nca2M7A8K9WPNMWcHe36KOQ8UjH9l2rY0tnpv75yHLGf-5HYFg21u',
+                    'http://portal.cipherchina.com:8650', '1', now(), now());
+
+        INSERT INTO cipher_ding_scan_app_info (company_id, config_id, application_name, application, scan_app_id,
+                                               scan_app_secret, callback_url, auth_url, create_time,
+                                               modify_time) VALUES (#{companyUUid}, #{configId}, '无线员工(PC端)',
+                                                                    'wlan_staff_pc', 'dingoah9zetq5y6qhgneli',
+                                                                    '5ehljOxsBG1mO7MFO-siFCDUbibFdY4Pt5Nmdl2CA0lZDEAbDdvPGvKgcJIhQXW6',
+                                                                    'http://staff.ciphersso.com:8650', "", now(),
+                                                                    now());
+
+        INSERT INTO cipher_ding_scan_app_info (company_id, config_id, application_name, application, scan_app_id,
+                                               scan_app_secret, callback_url, auth_url, create_time,
+                                               modify_time) VALUES (#{companyUUid}, #{configId}, '登录门户', 'portal_sso',
+                                                                    'dingoa8jgq8xffnrhk9rge',
+                                                                    'ES2Sb4xWT58Nca2M7A8K9WPNMWcHe36KOQ8UjH9l2rY0tnpv75yHLGf-5HYFg21u',
+                                                                    'http://portal.cipherchina.com:8645', "",
+                                                                    now(), now());
+
+        INSERT INTO cipher_ding_scan_app_info (company_id, config_id, application_name, application, scan_app_id,
+                                               scan_app_secret, callback_url, auth_url, create_time,
+                                               modify_time) VALUES (#{companyUUid}, #{configId}, '无线员工(移动端)',
+                                                                    'wlan_staff_mobile', 'dingoah9zetq5y6qhgneli',
+                                                                    '5ehljOxsBG1mO7MFO-siFCDUbibFdY4Pt5Nmdl2CA0lZDEAbDdvPGvKgcJIhQXW6',
+                                                                    'http://portal.cipherchina.com:8650', "", now(),
+                                                                    now());
+
+        INSERT INTO cipher_ding_scan_app_info (company_id, config_id, application_name, application, scan_app_id,
+                                               scan_app_secret, callback_url, auth_url, create_time,
+                                               modify_time) VALUES (#{companyUUid}, #{configId}, '无线访客(PC端)',
+                                                                    'wlan_guest_pc', 'dingoajhiiwoxpvuoc4hhx',
+                                                                    'KQznRjCvR0wGT4JJu7KM80OvQd1fsV9qbDEE0bO7_2hJZpXgpF0BURX2OhsA0osp',
+                                                                    'http://portal.cipherchina.com:8650', "", now(),
+                                                                    now());
+        INSERT INTO cipher_ding_scan_app_info (company_id, config_id, application_name, application, scan_app_id,
+                                               scan_app_secret, callback_url, auth_url, create_time,
+                                               modify_time) VALUES (#{companyUUid}, #{configId}, '无线访客(移动端)',
+                                                                    'wlan_guest_mobile',
+                                                                    'dingoajhiiwoxpvuoc4hhx',
+                                                                    'KQznRjCvR0wGT4JJu7KM80OvQd1fsV9qbDEE0bO7_2hJZpXgpF0BURX2OhsA0osp',
+                                                                    'http://portal.cipherchina.com:8650', "", now(),
+                                                                    now());
+
+    </insert>
+    <insert id="weixinConfigAppInitData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cipher_wx_config_info (corp_id, agent_id, corp_secret, companyUUid, match_rule, callback_url,
+                                           sync_config, attr_map, create_time,
+                                           modify_time) VALUES ('ww53bb96493d6bd959', '1000004',
+                                                                '3vKe7YGYs0CATC7_9AjBKSt73_nHxHjy42ovgAFRuZA',
+                                                                #{comapanyUUid}, 3,
+                                                                'http://portal.cipherchina.com:8645',
+                                                                '{"isAutoSync":1,"autoSyncDate":"00:00:00","interval":4}',
+                                                                '[{"localKey":"accountNumber","wxKey":"mobile"},{"localKey":"userName","wxKey":"name"},{"localKey":"mail","wxKey":"email"},{"localKey":"phoneNumber","wxKey":"mobile"},{"localKey":"job","wxKey":"position"}]',
+                                                                now(), now());
+
+    </insert>
+    <select id="weixinScanConfigAppInitData">
+        INSERT INTO cipher_wx_scan_app_info (company_id, config_id, application_name, application, scan_app_id,
+                                             scan_app_secret, callback_url, auth_url, create_time,
+                                             modify_time) VALUES (#{comapanyUUid}, #{configId},
+                                                                  '登录门户', 'portal_sso', '1000005',
+                                                                  '3vKe7YGYs0CATC7_9AjBKSt73_nHxHjy42ovgAFRuZA',
+                                                                  'http://portal.cipherchina.com:8645', '2',
+                                                                  now(), now());
+    </select>
+    <select id="loginFaildDataInit">
+        INSERT INTO cipher_login_exception_manage (time_range, fail_count, freezing_time, status, company_id,
+                                                   create_time, modify_time) VALUES (10, 5, 30, 0, #{companyUUid},
+                                                                                     now(),
+                                                                                     now());
+    </select>
+    <select id="passwordSettingInfoDataInit">
+
+        INSERT INTO cipher_password_setting_info (length, company_id, init, password_type) VALUES (6, #{companyUUid}, '123456', '1');
+
+    </select>
+    <select id="identitySettingInfoServiceImpl">
+        INSERT INTO cipher_identity_setting_info (company_uuid, type, auth_mode, binding_flow, regist_flow, forget_flow,
+                                                  create_time, modify_time) VALUES (#{companyUUid}, 1,
+                                                                                    '{"otherAuthDd":0,"otherAuthDb":0,"otherAuthNum":0,"otherAuthWx":0,"otherAuthDp":0,"otherAuthSf":0,"otherAuthDt":0,"otherAuthDingDt":0,"firstLogin":1,"infoCollection":0,"infoCollectionMail":0,"DpSend":0}',
+                                                                                    '{"bindingAppSf":0,"autoBindingSf":0,"bindingAppDd":0,"autoBindingDd":0,"bindingAppDb":0,"autoBindingDb":0,"bindingAppWx":0,"autoBindingWx":0,"isOpenMailBind":1,"isOpenNumBind":1}',
+                                                                                    '{"isOpenRegister":0,"isOpenMailReg":0,"isSkipMailReg":1,"isOpenNumReg":1,"isSkipNumReg":1}',
+                                                                                    '{"isOpenForgetPwd":0,"isOpenMailForget":0,"isOpenNumForget":1,"twoAuthForgetSf":1,"twoAuthForgetDd":1,"twoAuthForgetDb":1}',
+                                                                                    now(), now());
+        INSERT INTO cipher_identity_setting_info (company_uuid, type, auth_mode, binding_flow, regist_flow, forget_flow,
+                                                  create_time, modify_time) VALUES (#{companyUUid}, 2,
+                                                                                    '{"otherAuthDd":0,"otherAuthDb":1,"otherAuthNum":0,"otherAuthWx":0,"otherAuthDt":0,"firstLogin":0,"infoCollection":1,"infoCollectionMail":1,"DpSend":0}',
+                                                                                    '{"bindingAppDd":0,"autoBindingDd":0,"bindingAppDb":1,"autoBindingDb":1,"bindingAppWx":0,"autoBindingWx":0,"isOpenMailBind":1,"isOpenNumBind":1}',
+                                                                                    '{"isOpenRegister":0,"isOpenMailReg":0,"isSkipMailReg":0,"isOpenNumReg":0,"isSkipNumReg":0}',
+                                                                                    '{"isOpenForgetPwd":0,"isOpenMailForget":1,"isOpenNumForget":0,"twoAuthForgetDd":1,"twoAuthForgetDb":1,"twoAuthForgetWx":1}',
+                                                                                    now(), now());
+        INSERT INTO cipher_identity_setting_info (company_uuid, type, auth_mode, binding_flow, regist_flow, forget_flow,
+                                                  create_time, modify_time) VALUES (#{companyUUid}, 3,
+                                                                                    '{"otherAuthDd":0,"otherAuthDb":1,"otherAuthNum":0,"otherAuthWx":0,"otherAuthDt":1,"firstLogin":1,"infoCollection":1,"infoCollectionMail":1,"DpSend":0}',
+                                                                                    '{"bindingAppDd":0,"autoBindingDd":0,"bindingAppDb":1,"autoBindingDb":1,"bindingAppWx":0,"autoBindingWx":0,"isOpenMailBind":0,"isOpenNumBind":0}',
+                                                                                    '{"isOpenRegister":1,"isOpenMailReg":1,"isSkipMailReg":1,"isOpenNumReg":0,"isSkipNumReg":0}',
+                                                                                    "", now(), now());
+
+    </select>
+    <select id="smsChannelDataInit">
+
+        INSERT INTO cipher_sms_channel_info (name, state, type, company_id, parameter, limit_time, create_time,
+                                             modify_time) VALUES ('容联云', 1, 1, #{companyUUid},
+                                                                  '{"templateIdOne":"433103","appId":"8a216da865e6d03701660f8c38640f60","authToken":"fdc6b08c3f9b48bdae7829047e6c8c45","accountSid":"是什么?","templateId":"380021"}',
+                                                                  10, now(), now());
+        INSERT INTO cipher_sms_channel_info (name, state, type, company_id, parameter, limit_time, create_time,
+                                             modify_time) VALUES ('阿里云', 0, 2, #{companyUUid},
+                                                                  '{"accessKeyId":"LTAIjAxSJ5U1QocB","accessKeySecret":"1npJ5LnLrXmefz5royDIQlOlly0iXy","product":"Dysmsapi","signName":"赛赋科技","domain":"dysmsapi.aliyuncs.com","templateCode":"SMS_153990932","templateCodeOne":""}',
+                                                                  10, now(), now());
+
+    </select>
+    <select id="emailConfigDataInit" >
+        INSERT INTO cipher_email_config (company_uuid, smtp, port, title, dredge_title, seedkey_title, account, pwd,
+                                         describes, service_state, dredge_describes, seedkey_describes, isSSL,
+                                         send_time, interval_time, effective_time, extend_time, create_time,
+                                         modify_time) VALUES ( #{companyUUid} , 'smtp.exmail.qq.com', 465, '赛赋随机码', '开通账号',
+                                                              '【赛赋科技】请绑定动态密码的通知', 'test000@cipherchina.com',
+                                                              'Cipher2018!', '尊敬的用户,您的邮箱验证码为{code}', 0,
+                                                              '欢迎加入杭州赛赋科技有限公司！\n\n您已经成功加入杭州赛赋科技有限公司\n管理员已经为您开通了企业账号，首次登陆后重置密码。\n\n账号：{account}\n密码：{password}\n\n企业登录门户链接：www.cipherchina.com',
+                                                              '你好！\n\nIT管理员根据公司的安全要求，已启用了双因素动态密码认证。\n请各位员工用户使用微信小程序「赛赋认证器」扫描下方二维码，绑定动态密码。\n\n{QR Code}\n\n请保存好该二维码，以免泄露。\n如有问题请联系IT管理员。',
+                                                              1, 4, 3, 3, 3,now(),
+                                                              now());
+
+    </select>
+    <select id="erpDataInit" >
+        INSERT INTO cipher_mantis_erp (name,src,company_id) VALUES ('test', 'http://mobile.goldmantis.com:7090', #{companyUUid} );
+    </select>
+    <select id="doorPageEchoDataInit" >
+        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES (#{companyUUid} , 2, '赛赋统一身份认证平台', 'CipherChina智慧互联', '赛赋认证服务', 'http://101.132.145.69/20190819171712.png', 'http://139.196.143.107/20191203184435.png', now(),now());
+        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES ( #{companyUUid}, 3, 'CipherChina Technology', "", "", 'http://101.132.145.69/20191202195147.png', "",now(),now());
+        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES ( #{companyUUid}, 1, '中上标题', '左上标题', '中下标题', 'http://192.168.1.171/20190520152840.png', "", now(),now());
+        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES ( #{companyUUid}, 4, '赛赋统一身份认证平台', "", "", 'http://139.196.143.107/20191203184905.ico', "", now(),now());
+    </select>
+
+</mapper>

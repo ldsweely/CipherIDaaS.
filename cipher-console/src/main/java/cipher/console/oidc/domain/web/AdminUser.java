@@ -23,6 +23,16 @@ public class AdminUser {
 
     private String isAdmin; //是否是管理员
 
+    private String companyDomain;//公司域名
+
+    public String getCompanyDomain() {
+        return companyDomain;
+    }
+
+    public void setCompanyDomain(String companyDomain) {
+        this.companyDomain = companyDomain;
+    }
+
     public String getIsAdmin() {
         return isAdmin;
     }
@@ -84,12 +94,15 @@ public class AdminUser {
 
     @Override
     public String toString() {
-        return "UserInfo{" +
-                "uuid='" + uuid + '\'' +
+        return "AdminUser{" +
+                "companyUuid='" + companyUuid + '\'' +
+                ", uuid='" + uuid + '\'' +
                 ", user='" + user + '\'' +
                 ", email='" + email + '\'' +
                 ", userName='" + userName + '\'' +
                 ", phone='" + phone + '\'' +
+                ", isAdmin='" + isAdmin + '\'' +
+                ", companyDomain='" + companyDomain + '\'' +
                 '}';
     }
 }

@@ -34,7 +34,9 @@ public enum ResultCode {
 
     STRATEGY_MAC_DEVICE_BINDING_ERROR(15,"MAC绑定设备数量信息错误"),
 
-    TOKEN_CHECKED_FAILD(16,"Token校验失败");
+    TOKEN_CHECKED_FAILD(16,"Token校验失败"),
+
+    COMPANY_INSERT_ERROR(17,"公司信息插入失败");
 
 
 

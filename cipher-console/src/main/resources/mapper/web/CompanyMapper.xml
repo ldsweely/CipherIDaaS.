@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cipher.console.oidc.mapper.CompanyMapper">
+
+
+    <select id="getCompanyUUid" resultType="java.lang.String">
+        select company_uuid
+        from cipher_company_info
+        where 1 = 1 and  company_domain =#{domain}
+
+    </select>
+    <insert id="insertCompanyInfo" parameterType="cipher.console.oidc.domain.web.AdminUser">
+        INSERT INTO cipher_company_info (company_uuid,company_domain,
+                                             create_time, modify_time)
+        VALUES (#{companyUuid} ,#{companyDomain} ,
+                NOW(), NOW())
+    </insert>
+</mapper>

@@ -3,17 +3,17 @@
 
 <mapper namespace="cipher.console.oidc.mapper.AuthStrategyMapper">
     <resultMap id="BaseResultMap" type="cipher.console.oidc.domain.authsettingsdomain.AuthStrategyDomain">
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="uuid" property="uuid" jdbcType="VARCHAR" />
-        <result column="company_uuid" property="companyUuid" jdbcType="VARCHAR" />
-        <result column="strategy_name" property="strategyName" jdbcType="VARCHAR" />
-        <result column="priority" property="priority" jdbcType="INTEGER" />
-        <result column="auth_origin" property="authOrigin" jdbcType="INTEGER" />
-        <result column="second_auth" property="secondAuth" jdbcType="INTEGER" />
-        <result column="auth_type" property="auth_type" jdbcType="VARCHAR" />
-        <result column="effective_range" property="effectiveRange" jdbcType="VARCHAR" />
-        <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
-        <result column="modify_time" property="modify_time" jdbcType="TIMESTAMP" />
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="company_uuid" property="companyUuid" jdbcType="VARCHAR"/>
+        <result column="strategy_name" property="strategyName" jdbcType="VARCHAR"/>
+        <result column="priority" property="priority" jdbcType="INTEGER"/>
+        <result column="auth_origin" property="authOrigin" jdbcType="INTEGER"/>
+        <result column="second_auth" property="secondAuth" jdbcType="INTEGER"/>
+        <result column="auth_type" property="auth_type" jdbcType="VARCHAR"/>
+        <result column="effective_range" property="effectiveRange" jdbcType="VARCHAR"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modify_time" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="FieldColumn">
         (uuid,company_uuid,strategy_name,priority,auth_origin,second_auth,auth_type,effective_range,create_time,modify_time)
@@ -59,9 +59,26 @@
         WHERE uuid=#{uuid};
     </update>
     <select id="selectAuthStrategyByUuid" parameterType="string" resultMap="BaseResultMap">
-        SELECT id,uuid,company_uuid,strategy_name,priority,auth_origin,second_auth,auth_type,effective_range,create_time,modify_time
+        SELECT id,
+               uuid,
+               company_uuid,
+               strategy_name,
+               priority,
+               auth_origin,
+               second_auth,
+               auth_type,
+               effective_range,
+               create_time,
+               modify_time
         FROM cipher_identity_auth_strategy
-        WHERE uuid=#{uuid};
-</select>
+        WHERE uuid = #{uuid};
+    </select>
+    <insert id="dataInsert">
+        INSERT INTO cipher_identity_auth_strategy (company_uuid,strategy_name,priority,switches,second_auth,second_auth_type,scave_auth_state,auth_type,create_time,modify_time)
+        VALUES ( #{companyUUid} , '默认策略', 0, 0, 1,
+                '{"twoAuthDd":1,"twoAuthDb":0,"twoAuthNum":1,"twoAuthMail":0,"twoAuthDingPush":1,"twoAuthDt":1,"twoAuthWx":1,"twoAuthSf":0,"twoAuthDingDt":0}',
+                1, 0, now(), now());
+
+    </insert>
 
 </mapper>

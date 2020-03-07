@@ -7,17 +7,20 @@ import com.cipher.china.channel.factory.AuthInfoFactory;
 import com.cipher.china.channel.factory.AuthMachine;
 import com.cipher.china.channel.pojo.AuthInfo;
 import com.cipher.china.channel.pojo.AuthStrategy;
-import com.portal.commons.CacheKey;
-import com.portal.commons.Constants;
-import com.portal.commons.ConstantsCMP;
+import com.portal.commons.*;
+import com.portal.daoAuthoriza.RegisterApprovalMapper;
+import com.portal.daoAuthoriza.UserGroupMapper;
 import com.portal.domain.*;
 import com.portal.enums.ResultCode;
+import com.portal.jms.JMSProducer;
+import com.portal.jms.JMSType;
 import com.portal.listener.CookieListener;
 import com.portal.publistener.UserBehaviorPublistener;
 import com.portal.redis.RedisClient;
 import com.portal.service.*;
 import com.portal.utils.CookieUtils;
 import com.portal.utils.IpUtil;
+import com.portal.utils.NumberUtil;
 import com.portal.utils.SessionUtils;
 import com.portal.utils.aes.AES;
 import com.portal.utils.aes.AesKey;
@@ -61,6 +64,9 @@ public class SecondAuthController extends BaseController implements CookieListen
     private static final Logger logger = LoggerFactory.getLogger(SecondAuthController.class);
 
     @Autowired
+    private UUIDService uuidService;
+
+    @Autowired
     private PortalAuthChannelService portalAuthChannelService;
 
     @Autowired
@@ -79,6 +85,9 @@ public class SecondAuthController extends BaseController implements CookieListen
     private ISessionService sessionService;
 
     @Autowired
+    private RegisterApprovalMapper registerApprovalMapper;
+
+    @Autowired
     private UserBehaviorPublistener userBehaviorPublistener;
 
     @Autowired
@@ -88,7 +97,15 @@ public class SecondAuthController extends BaseController implements CookieListen
     private OtpDynamicInfoService otpDynamicInfoService;
 
     @Autowired
+    private CheckUserService checkUserService;
+
+    @Autowired
+    private UserGroupMapper userGroupMapper;
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private JMSProducer jmsProducer;
 
     @RequestMapping(value = "/regist")
     @ResponseBody
@@ -169,13 +186,131 @@ public class SecondAuthController extends BaseController implements CookieListen
 //        }
 
         //注册到数据库
-        if (!userInfoService.registUser(registerApprovalDomain)) {
-            logger.info("Register Failed As An Exception Caught..");
-            return sendBaseErrorMap(USER_REGISTER_MEET_AN_EXCEPTION);
+//        if (!userInfoService.registUser(registerApprovalDomain)) {
+//            logger.info("Register Failed As An Exception Caught..");
+//            return sendBaseErrorMap(USER_REGISTER_MEET_AN_EXCEPTION);
+//        }
+        Integer flag = checkUserService.checkUserInfo(companyUUid, "", registerApprovalDomain.getUserEmail(), registerApprovalDomain.getPhoneNumber());
+        if (flag.equals(1)) {
+            return NewReturnUtils.failureResponse(ReturnMsg.CHECKUSERACCOUNTNUMBER);
+        } else if (flag.equals(2)) {
+            return NewReturnUtils.failureResponse(ReturnMsg.CHECKUSERMAIL);
+        } else if (flag.equals(3)) {
+            return NewReturnUtils.failureResponse(ReturnMsg.CHECKUSERTELEPHONE);
+        } else {
+
+            Integer service = registerApprovalMapper.serviceStateBycompanyUuid(companyUUid);
+                    /*//如果是邮件通知 ，则必须使邮件通知服务开启
+                    if(StringUtils.isNotEmpty(registerApprovalDomain.getUserEmail())&&service.equals(1)){
+                        return NewReturnUtils.failureResponse(ReturnMsg.APPROVALEMAIL);
+                    }*/
+            if (registerApprovalDomain != null ) {
+                //审批时：赛赋扫码，钉钉扫码，大白扫码 如果发生在该公司下重复，则注册失败
+                boolean platFlag = false;
+                boolean dabbyFlag = false;
+                boolean dingFlag = false;
+                //赛赋扫码是否发生重复
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getPlatId())) {
+                    int a = registerApprovalMapper.selectPlatByPlatId(registerApprovalDomain.getPlatId(), companyUUid);
+                    if (a > 0) {
+                        platFlag = true;
+                    }
+                }
+                //大白扫码是否发生重复
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getIdNum())) {
+                    int b = registerApprovalMapper.selectDabbyByIdNum(registerApprovalDomain.getIdNum(), companyUUid);
+                    if (b > 0) {
+                        dabbyFlag = true;
+                    }
+                }
+                //钉钉扫码是否发生重复
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getDingUserId()) && org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getUnionId())) {
+                    int c = registerApprovalMapper.selectDingByDingId(registerApprovalDomain.getDingUserId(), registerApprovalDomain.getUnionId(), companyUUid);
+                    if (c > 0) {
+                        dingFlag = true;
+                    }
+                }
+                if (platFlag || dabbyFlag || dingFlag) {
+                    if (platFlag) {
+                        return NewReturnUtils.failureResponse(ReturnMsg.PLATEWMAUTH);
+                    }
+                    if (dabbyFlag) {
+                        return NewReturnUtils.failureResponse(ReturnMsg.DABBYEWMAUTH);
+                    }
+                    if (dingFlag) {
+                        return NewReturnUtils.failureResponse(ReturnMsg.DINGEWMAUTH);
+                    }
+                }
+                //没有发生重复继续执行
+                String userId = uuidService.getUUid();
+                RegisterUserInfo registerUserInfo = new RegisterUserInfo();
+                registerUserInfo.setUuid(userId);
+                registerUserInfo.setCompanyId(companyUUid);
+                registerUserInfo.setAccountNumber(registerApprovalDomain.getPhoneNumber());
+                registerUserInfo.setUserName(registerApprovalDomain.getUserName());
+                registerUserInfo.setMail(registerApprovalDomain.getUserEmail());
+                registerUserInfo.setPhoneNumber(registerApprovalDomain.getPhoneNumber());
+                //向用户表添加一条用户信息
+                registerApprovalMapper.insertRegisterUser(registerUserInfo);
+
+                //审批通过后，分别向对应表中添加数据（赛赋扫码，大白扫码，钉钉扫码）
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getPlatId())) {
+                    PlatEwmDomain platEwmDomain = new PlatEwmDomain();
+                    platEwmDomain.setPlatId(registerApprovalDomain.getPlatId());
+                    platEwmDomain.setUserId(userId);
+                    platEwmDomain.setCompanyId(companyUUid);
+                    registerApprovalMapper.insertPlat(platEwmDomain);
+                }
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getIdNum())) {
+                    DabbyEwmDomain dabbyEwmDomain = new DabbyEwmDomain();
+                    dabbyEwmDomain.setUserId(userId);
+                    dabbyEwmDomain.setCompanyId(companyUUid);
+                    dabbyEwmDomain.setLinkAccount(registerApprovalDomain.getIdNum());
+                    registerApprovalMapper.insertDabby(dabbyEwmDomain);
+                }
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getDingUserId()) && org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getUnionId())) {
+                    DingEwmDomain dingEwmDomain = new DingEwmDomain();
+                    dingEwmDomain.setUserId(userId);
+                    dingEwmDomain.setCompanyId(companyUUid);
+                    dingEwmDomain.setDingUserId(registerApprovalDomain.getDingUserId());
+                    dingEwmDomain.setDingUnionId(registerApprovalDomain.getUnionId());
+                    registerApprovalMapper.insertDing(dingEwmDomain);
+                }
+
+                //向密码表添加一条密码
+                String password = NumberUtil.getStringRandom(8);
+                String encryptPassword = AES.encryptToBase64(password, AesKey.AES_KEY);
+                registerApprovalMapper.insertRegisterPwd(userId, registerApprovalDomain.getPhoneNumber(), encryptPassword);
+
+                //添加到根节点
+                GroupUserMapDomain groupUserMapDomain = new GroupUserMapDomain();
+                groupUserMapDomain.setUserId(userId);
+                groupUserMapDomain.setGroupId(1);
+                userGroupMapper.insertUserGroupMap(groupUserMapDomain);
+                //发送账号密码，优先邮件（邮件或短信）
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(registerApprovalDomain.getUserEmail()) && service.equals(0)) {
+                    //发送邮件
+                    EmailAccountInfoDomain emailAccountInfoDomain = new EmailAccountInfoDomain();
+                    emailAccountInfoDomain.setCompanyId(companyUUid);
+                    emailAccountInfoDomain.setMail(registerApprovalDomain.getUserEmail());
+                    emailAccountInfoDomain.setAccount(registerApprovalDomain.getPhoneNumber());
+                    emailAccountInfoDomain.setPassword(password);
+                    jmsProducer.sendMessage(emailAccountInfoDomain, JMSType.EMAIL_SEND_INFORM);
+                } else {
+                    //发送短信
+                    SmsAccountInfoDomain smsAccountInfoDomain = new SmsAccountInfoDomain();
+                    smsAccountInfoDomain.setAccount(registerApprovalDomain.getPhoneNumber());
+                    smsAccountInfoDomain.setPassword(password);
+                    smsAccountInfoDomain.setTelephone(registerApprovalDomain.getPhoneNumber());
+                    smsAccountInfoDomain.setCompanyId(companyUUid);
+                    jmsProducer.sendMessage(smsAccountInfoDomain, JMSType.SMS_SEND_INFORM);
+                }
+            }
         }
 
         return sendBaseNormalMap(SUCCESS);
-    }
+
+}
 
     /**
      * 获取二次认证流程
@@ -293,8 +428,8 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(userInfoDomainBySaifu.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, userInfoDomainBySaifu.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, userInfoDomainBySaifu.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
 
         }
 
@@ -364,8 +499,8 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(user.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, user.getUuid());
-            SessionUtils.setSession(request, response,Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, user.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
 
         }
 
@@ -450,8 +585,8 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(userInfo.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, userInfo.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, userInfo.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
         }
 
 
@@ -531,8 +666,8 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(userInfoDomainByDabai.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, userInfoDomainByDabai.getUuid());
-            SessionUtils.setSession(request, response,Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, userInfoDomainByDabai.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
         }
 
         return sendBaseNormalMap();
@@ -606,8 +741,8 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(userInfoDomainByMail.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, userInfoDomainByMail.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, userInfoDomainByMail.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
         }
         return sendBaseNormalMap(SUCCESS);
 
@@ -687,8 +822,8 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(userInfoDomainByPhone.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, userInfoDomainByPhone.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, userInfoDomainByPhone.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
 
         }
 
@@ -722,7 +857,7 @@ public class SecondAuthController extends BaseController implements CookieListen
         AuthInfo authInfo = AuthInfoFactory.createWeixinAuth(code);
         AuthMachine authMachine = portalAuthChannelService.auth(authStrategy, authInfo, companyUUid);
 
-       //判断扫码认证是否成功
+        //判断扫码认证是否成功
         AuthResult authResult = authMachine.getTheResult();
         if (!authMachine.isSuccess()) {
             authResult = authMachine.getTheFailedResult();
@@ -730,10 +865,9 @@ public class SecondAuthController extends BaseController implements CookieListen
         }
 
 
+        logger.info("weixin san info auth result:  " + authResult.getUserName());
 
-        logger.info("weixin san info auth result:  "+ authResult.getUserName());
-
-       // String uu="Xia";
+        // String uu="Xia";
         //获取与微信绑定的账号
         UserInfoDomain userInfo =
                 userInfoService.selectUserInfoByWeixinInfo(authResult.getUserName(), companyUUid);
@@ -777,11 +911,11 @@ public class SecondAuthController extends BaseController implements CookieListen
                 e.printStackTrace();
             }
             CookieUtils.writePortalCookie(response, userId, this::setCookies);
-         //   redisClient.remove(CacheKey.getCacheKeyUserAuth(userInfo.getUuid()));
+            //   redisClient.remove(CacheKey.getCacheKeyUserAuth(userInfo.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, userInfo.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, userInfo.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
         }
 
 
@@ -789,15 +923,14 @@ public class SecondAuthController extends BaseController implements CookieListen
     }
 
 
-
 /**
-     * dotp认证二次认证扫码
-     *
-     * @param userId       用户的唯一标识
-     * @param companyUUid  公司的ID
-     * @param dingTotpCode 动态验证码
-     * @return
-     *//*
+ * dotp认证二次认证扫码
+ *
+ * @param userId       用户的唯一标识
+ * @param companyUUid  公司的ID
+ * @param dingTotpCode 动态验证码
+ * @return
+ *//*
 
     @RequestMapping(value = "/dingTotpSecondCheck")
     @ResponseBody
@@ -886,7 +1019,7 @@ public class SecondAuthController extends BaseController implements CookieListen
         String cacheKey = CacheKey.getDingPushReturnResultKey(userId);
         redisTemplate.delete(cacheKey);
 
-        logger.info("enter secondAuthController cacheKey "+redisClient.get(cacheKey));
+        logger.info("enter secondAuthController cacheKey " + redisClient.get(cacheKey));
 
         //获取用户信息
         UserInfoDomain user = userInfoService.getUserInfoByUUid(userId);
@@ -945,16 +1078,14 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(user.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, user.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, user.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
         }
 
         logger.info("enter secondAuthController dingPushSecondCheck response" + sendBaseNormalMap(SUCCESS));
 
         return sendBaseNormalMap(SUCCESS);
     }
-
-
 
 
     @RequestMapping(value = "/dingPushPolling")
@@ -1027,8 +1158,8 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(user.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, user.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, user.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
         }
 
         logger.info("enter secondAuthController dingPushSecondCheck response" + sendBaseNormalMap(SUCCESS));
@@ -1038,13 +1169,14 @@ public class SecondAuthController extends BaseController implements CookieListen
     }
 
     /**
-    * OTP 二次认证
-    * @param userId
-     * @param  companyUUid
-    * */
+     * OTP 二次认证
+     *
+     * @param userId
+     * @param companyUUid
+     */
     @RequestMapping(value = "/otpDynamicSecondCheck")
     @ResponseBody
-    public Map<String, Object> otpDynamicSecondCheck(HttpServletRequest request, HttpServletResponse response, String userId, String companyUUid,String otpDynamicCode) {
+    public Map<String, Object> otpDynamicSecondCheck(HttpServletRequest request, HttpServletResponse response, String userId, String companyUUid, String otpDynamicCode) {
         //入参校验
         if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(companyUUid)) {
             logger.warn("enter otpDynamicSecondCheck failed but param uuid=[{}] companyUuid = [{}]",
@@ -1060,7 +1192,7 @@ public class SecondAuthController extends BaseController implements CookieListen
         AuthStrategy authStrategy = new AuthStrategy();
         authStrategy.setOtpDynamicCode(Constants.ON);
         //设置认证实体
-        AuthInfo authInfo = AuthInfoFactory.createOtpDynamicAuth(userId,otpDynamicCode);
+        AuthInfo authInfo = AuthInfoFactory.createOtpDynamicAuth(userId, otpDynamicCode);
 
         AuthMachine authMachine = portalAuthChannelService.auth(authStrategy, authInfo, companyUUid);
         AuthResult authResult = authMachine.getTheResult();
@@ -1071,24 +1203,24 @@ public class SecondAuthController extends BaseController implements CookieListen
             return sendTheMap(authResult.getResultCode(), authResult.getResultMessage());
         }
 
-            //otp下发的秘钥验证成功后保存
-            String dynamicKey=(String) redisClient.get(CacheKey.getCacheKeyUserOtpSecrect(userId));
-            UserInfoDomain userInfoDomain=new UserInfoDomain();
-            userInfoDomain.setUuid(userId);
-            if(StringUtils.isNotEmpty(dynamicKey)){
-                String otpkey=otpDynamicInfoService.getOtpDynamicInfo(userId);
-                if(StringUtils.isNotEmpty(otpkey)){
-                    otpDynamicInfoService.deleteOtpDynamicInfo(userId);
-                }
-                String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
-                OtpDynamicInfo otpDynamicInfo=new OtpDynamicInfo(userId,dynamicKey, uuid, companyUUid);
-                otpDynamicInfoService.insertOtpDynamicInfo(otpDynamicInfo);
-                //设置totp秘钥下发状态
-                userInfoDomain.setIssueStatus(1);
-                userInfoService.updateUserInfo(userInfoDomain);
-
-                redisClient.remove(CacheKey.getCacheKeyUserOtpSecrect(userId));
+        //otp下发的秘钥验证成功后保存
+        String dynamicKey = (String) redisClient.get(CacheKey.getCacheKeyUserOtpSecrect(userId));
+        UserInfoDomain userInfoDomain = new UserInfoDomain();
+        userInfoDomain.setUuid(userId);
+        if (StringUtils.isNotEmpty(dynamicKey)) {
+            String otpkey = otpDynamicInfoService.getOtpDynamicInfo(userId);
+            if (StringUtils.isNotEmpty(otpkey)) {
+                otpDynamicInfoService.deleteOtpDynamicInfo(userId);
             }
+            String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+            OtpDynamicInfo otpDynamicInfo = new OtpDynamicInfo(userId, dynamicKey, uuid, companyUUid);
+            otpDynamicInfoService.insertOtpDynamicInfo(otpDynamicInfo);
+            //设置totp秘钥下发状态
+            userInfoDomain.setIssueStatus(1);
+            userInfoService.updateUserInfo(userInfoDomain);
+
+            redisClient.remove(CacheKey.getCacheKeyUserOtpSecrect(userId));
+        }
 
 
         //判断redis是否有该对象
@@ -1125,25 +1257,18 @@ public class SecondAuthController extends BaseController implements CookieListen
             redisClient.remove(CacheKey.getCacheKeyUserAuth(user.getUuid()));
 
             //设置session
-            SessionUtils.setSession(request,response, USERNAME, user.getUuid());
-            SessionUtils.setSession(request,response, Constants.COMPANY_UUID, companyUUid);
+            SessionUtils.setSession(request, response, USERNAME, user.getUuid());
+            SessionUtils.setSession(request, response, Constants.COMPANY_UUID, companyUUid);
         }
 
         return sendBaseNormalMap(SUCCESS);
     }
 
 
-
-
-
-
-
     @Override
     public void setCookies(String key, String value) {
         redisClient.put(key, value);
     }
-
-
 
 
 }

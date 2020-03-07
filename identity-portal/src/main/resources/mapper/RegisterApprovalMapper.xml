@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.portal.daoAuthoriza.RegisterApprovalMapper">
+    <resultMap id="resultBaseMap" type="com.portal.domain.RegisterApprovalDomain">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="company_uuid" property="companyUuid" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_email" property="userEmail" jdbcType="VARCHAR"/>
+        <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <select id="countApprovalListBycompanyUuid" parameterType="string" resultType="int">
+        SELECT count(id)
+        from cipher_regist_user
+        WHERE company_uuid = #{companyUuid}
+          AND status = 3
+    </select>
+    <select id="selectApprovalListBycompanyUuid" resultMap="resultBaseMap"
+            parameterType="com.portal.domain.RegisterApprovalDomain">
+        SELECT id,
+               uuid,
+               company_uuid,
+               user_name,
+               user_email,
+               phone_number,
+               status,
+               create_time,
+               modify_time
+        FROM cipher_regist_user
+        WHERE company_uuid = #{companyUuid}
+          AND status = 3
+        ORDER BY create_time DESC
+        LIMIT #{pageData.currentRow}, #{pageData.rows}
+    </select>
+    <select id="countRecordsListBycompanyUuid" parameterType="string" resultType="int">
+        SELECT count(id)
+        from cipher_regist_user
+        WHERE company_uuid = #{companyUuid}
+          AND (status = 1 OR status = 2)
+    </select>
+    <select id="selectRecordsListBycompanyUuid" resultMap="resultBaseMap"
+            parameterType="com.portal.domain.RegisterApprovalDomain">
+        SELECT id,
+               uuid,
+               company_uuid,
+               user_name,
+               user_email,
+               phone_number,
+               status,
+               create_time,
+               modify_time
+        FROM cipher_regist_user
+        WHERE company_uuid = #{companyUuid}
+          AND (status = 1 OR status = 2)
+        ORDER BY modify_time DESC
+        LIMIT #{pageData.currentRow}, #{pageData.rows}
+    </select>
+    <update id="ApprovalResult">
+        UPDATE cipher_regist_user
+        <set>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            modify_time=NOW()
+        </set>
+        WHERE company_uuid=#{companyUuid} AND uuid=#{uuid};
+    </update>
+    <select id="selectRegisterByuuid" parameterType="string"
+            resultType="com.portal.domain.RegisterApprovalDomain">
+        SELECT id,
+               uuid,
+               company_uuid,
+               user_name,
+               user_email,
+               phone_number,
+               status,
+               plat_id,
+               id_num,
+               ding_user_id,
+               union_id,
+               create_time,
+               modify_time
+        FROM cipher_regist_user
+        WHERE uuid = #{uuid}
+    </select>
+    <insert id="insertRegisterUser" parameterType="com.portal.domain.RegisterUserInfo">
+        INSERT INTO cipher_user_info
+            (uuid,
+             company_id,
+             account_number,
+             user_name,
+             mail,
+             phone_number,
+             create_time,
+             modify_time)
+        VALUES
+               (#{uuid},
+                #{companyId},
+                #{accountNumber},
+                #{userName},
+                #{mail},
+                #{phoneNumber},
+                NOW(),
+                NOW())
+    </insert>
+    <insert id="insertRegisterPwd" parameterType="string">
+        INSERT INTO cipher_password_authorization_mag
+            (user_id,
+             account_number,
+             password,
+             create_time,
+             modify_time)
+            VALUES
+                (#{userId},
+                 #{accountNumber},
+                 #{password},
+                 NOW(),
+                 NOW())
+    </insert>
+    <select id="serviceStateBycompanyUuid" parameterType="string" resultType="integer">
+          SELECT service_state FROM cipher_email_config WHERE company_uuid=#{companyUuid}
+    </select>
+    <select id="selectPlatByPlatId" resultType="int">
+        SELECT count(id) FROM cipher_account_plat_mapping WHERE plat_id=#{platId} AND company_id=#{companyId}
+    </select>
+    <select id="selectDabbyByIdNum" resultType="int">
+        SELECT count(id) FROM cipher_account_link_map WHERE link_account=#{idNum} AND company_id=#{companyId}
+    </select>
+    <select id="selectDingByDingId" resultType="int">
+        SELECT count(id) FROM cipher_account_ding_bind_mapping
+        WHERE ding_user_id=#{dingUserId} AND ding_union_id=#{dingUnionId} AND company_id=#{companyId}
+    </select>
+    <insert id="insertPlat" parameterType="com.portal.domain.PlatEwmDomain">
+        INSERT INTO cipher_account_plat_mapping
+            (plat_id,user_id,company_id,create_time)
+        VALUES
+            (#{platId},#{userId},#{companyId},NOW())
+    </insert>
+    <insert id="insertDabby" parameterType="com.portal.domain.DabbyEwmDomain">
+        INSERT INTO cipher_account_link_map
+            (user_id,company_id,link_account,state,create_time)
+        VALUES
+            (#{userId},#{companyId},#{linkAccount},#{state},NOW())
+    </insert>
+    <insert id="insertDing" parameterType="com.portal.domain.DingEwmDomain">
+        INSERT INTO cipher_account_ding_bind_mapping
+            (ding_user_id,ding_union_id,user_id,company_id,create_time,modify_time)
+        VALUES
+            (#{dingUserId},#{dingUnionId},#{userId},#{companyId},NOW(),NOW())
+    </insert>
+    <delete id="deleteDabby">
+       delete from cipher_account_link_map where user_id=#{userId}
+    </delete>
+
+    <delete id="deletePlat">
+       delete from cipher_account_plat_mapping where user_id=#{userId}
+    </delete>
+
+    <delete id="deleteAdBind">
+      delete from cipher_account_ad_binding where user_id=#{userId}
+    </delete>
+
+    <delete id="deleteUserApplication">
+     delete from cipher_user_application_map where user_id=#{userId}
+    </delete>
+    <insert id="insertUser">
+        INSERT INTO cipher_user_info
+        (uuid,
+         company_id,
+         account_number,
+         user_name,
+         mail,
+         is_admin,
+         phone_number,
+         create_time,
+         modify_time)
+        VALUES
+        (#{uuid},
+         #{companyUuid} ,
+         #{phone} ,
+         #{userName},
+         #{email},
+         "1",
+         #{phone},
+         NOW(),
+         NOW())
+    </insert>
+
+
+</mapper>

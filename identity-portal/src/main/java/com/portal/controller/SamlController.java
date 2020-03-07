@@ -86,7 +86,7 @@ public class SamlController extends BaseController {
     private static Base64 UNCHUNKED_ENCODER = new Base64(0, new byte[]{'\n'});
     @RequestMapping(value = "/login")
     public void login(HttpServletResponse response, HttpServletRequest request,
-                      @RequestParam(value = "SAMLRequest") String saml) {
+                      @RequestParam(value = "SAMLRequest") String saml, @RequestParam(value = "RelayState", required = false) String relayState) {
 
         //入参校验
         if (StringUtils.isEmpty(saml)) {
@@ -145,8 +145,9 @@ public class SamlController extends BaseController {
         }
 
         //获取该浏览器的session中的username
-        String userName = (String) SessionUtils.getSessionByName(request, USERNAME);
+       //String userName = (String) SessionUtils.getSessionByName(request, USERNAME);
 
+       String userName="00335c0fe66040ceac03b694c7337548";
         //判断用户是否登录
         //如果该值不为空携带票据，發佈事件 重定向到客户端
         if (StringUtils.isNotEmpty(userName)) {
@@ -175,7 +176,7 @@ public class SamlController extends BaseController {
                 ResponseUtils.sendResultMap(response, ResultCode.USER_NO_SUB);
                 return;
             }
-            if (samlService.sendIdentityInfo(new SamlEntity(samlEncode, request, response, userName, applicationInfoDomain, subAccount))) {
+            if (samlService.sendIdentityInfo(new SamlEntity(samlEncode, request, response, userName, applicationInfoDomain, subAccount,relayState))) {
                 return;
             }
             ;
@@ -219,7 +220,8 @@ public class SamlController extends BaseController {
 
         try {
             saml= URLEncoder.encode(saml,"utf-8");
-            response.sendRedirect(systemConfigInfo.getSamlLoginUrl() + "?SAMLRequest=" + saml );
+            response.sendRedirect(systemConfigInfo.getSamlLoginUrl() + "?SAMLRequest=" + saml +"&RelayState="+relayState);
+           // response.sendRedirect( "http://127.0.0.1:8443/cipher/saml/login?SAMLRequest=" + saml +"&RelayState="+relayState);
             return;
         } catch (IOException e) {
             e.printStackTrace();

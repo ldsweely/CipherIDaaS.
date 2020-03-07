@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.portal.daoAuthoriza.UserGroupMapper">
+
+
+    <insert id="insertUserGroupMap" parameterType="com.portal.domain.GroupUserMapDomain">
+        INSERT INTO cipher_group_user_map (user_id,group_id)
+        VALUES (#{userId},
+                #{groupId})
+
+    </insert>
+
+</mapper>

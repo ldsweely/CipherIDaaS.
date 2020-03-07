@@ -134,10 +134,14 @@ public class SamlServiceImpl implements SamlService {
         AuthnRequest authnRequest = (AuthnRequest)openSamlImplementation.transferXML2SAMLObject(samlEntity.getSaml());
         String acsUrl = authnRequest.getAssertionConsumerServiceURL();
         openSamlImplementation.signObject(response, AlgorithmMethod.RSA_SHA256, DigestMethod.RIPEMD160,samlEntity.getApplicationInfoDomain());
+        String relayState="";
+        if (StringUtils.isEmpty(samlEntity.getRelayState())){
+            relayState=samlEntity.getApplicationInfoDomain().getRelayState();
+        }
+        relayState=samlEntity.getRelayState();
 
         System.out.println(response.toString());
-
-        if (httpPostBinding(samlEntity.getApplicationInfoDomain().getRelayState(), httpServletResponse,acsUrl, response)){
+        if (httpPostBinding(relayState, httpServletResponse,acsUrl, response)){
          return true;
         }
         return false;

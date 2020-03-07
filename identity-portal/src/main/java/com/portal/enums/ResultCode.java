@@ -202,6 +202,8 @@ public enum ResultCode {
     SAML_REGIST_IS_ERROR(6002,"saml校验发生错误，请检查携带参数是否符合标准"),
 
     SAML_RETURN_ERROR(6003,"saml返回断言失败"),
+
+    TOKEN_CHECKED_FAILD(7001,"签名校验失败无法进行单点登录")
     ;
 
     private int code;

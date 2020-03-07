@@ -26,13 +26,24 @@ public class SamlEntity implements Serializable {
 
     private String subAccout;//应用的从账号
 
-    public SamlEntity(String saml, HttpServletRequest request, HttpServletResponse response, String uuid, ApplicationInfoDomain applicationInfoDomain, String subAccout) {
+    private String relayState; //访问资源的地址
+
+    public SamlEntity(String saml, HttpServletRequest request, HttpServletResponse response, String uuid, ApplicationInfoDomain applicationInfoDomain, String subAccout,String relayState) {
+        this.relayState=relayState;
         this.saml = saml;
         this.request = request;
         this.response = response;
         this.uuid = uuid;
         this.applicationInfoDomain = applicationInfoDomain;
         this.subAccout = subAccout;
+    }
+
+    public String getRelayState() {
+        return relayState;
+    }
+
+    public void setRelayState(String relayState) {
+        this.relayState = relayState;
     }
 
     public String getSubAccout() {

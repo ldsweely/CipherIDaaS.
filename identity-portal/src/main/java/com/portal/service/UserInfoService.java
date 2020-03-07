@@ -33,7 +33,7 @@ public interface UserInfoService {
     int insertSubName(SubClientInfoDomain subClientInfoDomain);
 
 
-    public UserInfoDomain getUserInfo(String accountNumber);
+    public UserInfoDomain getUserInfo(String accountNumber,String companyUuid);
 
     public Map<String,Object> sendkapataMsg(String email, int type,String username);
 

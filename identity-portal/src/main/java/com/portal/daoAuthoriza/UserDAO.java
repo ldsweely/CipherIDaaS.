@@ -46,7 +46,7 @@ public interface UserDAO {
 
     public int updateSubName(SubClientInfoDomain subClientInfoDomain);
 
-    public UserInfoDomain getUserInfo(@Param("uuid") String uuid);
+    public UserInfoDomain getUserInfo(@Param("uuid") String uuid,@Param("companyUuid") String companyUuid);
 
     public  SubAccountMapDomain getSubAccountMap(SubAccountMapDomain subAccountMapDomain);
 

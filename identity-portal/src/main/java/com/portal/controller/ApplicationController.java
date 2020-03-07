@@ -43,9 +43,10 @@ public class ApplicationController {
     @ResponseBody
     public Map<String, Object> recomendSubAccount(HttpServletRequest request, Model model,
                                                   @RequestParam(value = "username") String username,
+                                                  @RequestParam(value = "companyUuid") String companyUuid,
                                                   @RequestParam(value = "clientId", required = false) String clientId) {
         Map<String, Object> map = new HashMap<>();
-        UserInfoDomain userInfoDomain = userInfoService.getUserInfo(username);
+        UserInfoDomain userInfoDomain = userInfoService.getUserInfo(username,companyUuid);
         if(null==userInfoDomain){
             map.put("return_code",1);
             map.put("return_msg","用户不存在");

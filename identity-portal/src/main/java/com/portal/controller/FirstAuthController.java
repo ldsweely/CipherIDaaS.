@@ -158,7 +158,7 @@ public class FirstAuthController extends BaseController implements CookieListene
 
 
         //获取用户信息
-        UserInfoDomain user = userInfoService.getUserInfo(accountNumber);
+        UserInfoDomain user = userInfoService.getUserInfo(accountNumber,companyUUid);
 
         String uuid = user == null ? null : user.getUuid();
 
@@ -275,7 +275,7 @@ public class FirstAuthController extends BaseController implements CookieListene
                 identityModesService.getIdentityAuthenticationByCompanyId(companyUUid);
 
         //获取用户信息
-        UserInfoDomain user = userInfoService.getUserInfo(accountNumber);
+        UserInfoDomain user = userInfoService.getUserInfo(accountNumber,companyUUid);
 
         if (user == null) {
             logger.info("This User =[{}] Is Not Register", accountNumber);
@@ -1225,7 +1225,7 @@ public class FirstAuthController extends BaseController implements CookieListene
                 identityModesService.getIdentityAuthenticationByCompanyId(companyUUid);
 
         //获取用户信息
-        UserInfoDomain user = userInfoService.getUserInfo(accountNumber);
+        UserInfoDomain user = userInfoService.getUserInfo(accountNumber,companyUUid);
 
         if (user == null) {
             logger.info("This User =[{}] Is Not Register", accountNumber);

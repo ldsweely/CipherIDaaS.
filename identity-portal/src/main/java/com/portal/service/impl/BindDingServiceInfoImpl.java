@@ -184,14 +184,14 @@ public class BindDingServiceInfoImpl implements BindDingServiceInfo {
     }
 
     @Override
-    public UserInfoDomain getUserByAccountNumber(String daiBaiId) {
+    public UserInfoDomain getUserByAccountNumber(String daiBaiId,String companyUuid) {
 
         //入参校验
         if (StringUtils.isBlank(daiBaiId)){
             return null;
         }
 
-        return userDAO.getUserInfo(daiBaiId);
+        return userDAO.getUserInfo(daiBaiId,companyUuid);
     }
 
     @Override

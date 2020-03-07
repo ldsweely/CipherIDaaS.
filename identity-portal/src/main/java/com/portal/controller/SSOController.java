@@ -79,7 +79,7 @@ public class SSOController extends BaseController implements CookieListener {
 
     @RequestMapping(value = "/login/sso")
     @ResponseBody
-    public Map<String, Object> ssoLogin(HttpServletResponse response, HttpServletRequest request, AdminUser adminUser, String rsaSign, String signtime) {
+    public Map<String, Object> ssoLogin(HttpServletResponse response, HttpServletRequest request, AdminUser adminUser, String rsaSign, String signtime,String companyUuid) {
         //rsaSign= URLDecoder.decode(rsaSign);
 
         Map<String, String> map = new HashMap<>();
@@ -98,7 +98,7 @@ public class SSOController extends BaseController implements CookieListener {
         }
         //设置登录状态
         //TODO:增加session,cookie
-        UserInfoDomain userInfoDomain=userInfoService.getUserInfo(adminUser.getPhone());
+        UserInfoDomain userInfoDomain=userInfoService.getUserInfo(adminUser.getPhone(),companyUuid);
         if (userInfoDomain == null){
             return sendBaseErrorMap(ResultCode.USER_IS_NOT_EXIST);
         }

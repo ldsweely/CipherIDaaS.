@@ -132,8 +132,8 @@ public class UserInfoServiceImpl  implements UserInfoService {
 
 
     @Override
-    public UserInfoDomain getUserInfo(String uuid) {
-        return userDAO.getUserInfo(uuid);
+    public UserInfoDomain getUserInfo(String uuid,String companyUuid) {
+        return userDAO.getUserInfo(uuid,companyUuid);
     }
 
     @Override

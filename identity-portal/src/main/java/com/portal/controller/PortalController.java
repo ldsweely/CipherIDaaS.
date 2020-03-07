@@ -89,12 +89,6 @@ public class PortalController extends BaseController {
             GroupInfoDomain groupInfoDomain = new GroupInfoDomain();
             groupInfoDomain.setUserId(uuid);
             groupInfoDomain.setCompanyId(companyUuid);
-           /* GroupInfoDomain groupInfo = groupService.getGroupInfoInfo(groupInfoDomain);
-            if (null == groupInfo) {
-                map.put("return_code", ReturnCode.FAIL);
-                map.put("return_msg", "用户部门不存在");
-                return map;
-            }*/
             UserBehaviorInfo userBehaviorInfo = new UserBehaviorInfo();
             userBehaviorInfo.setUserId(uuid);
             UserBehaviorInfo user = userBehaviorService.selectUserBehaviorInfo(userBehaviorInfo);
@@ -107,12 +101,6 @@ public class PortalController extends BaseController {
                 map.put("ip", "");
             }
             IconSettingsDomain iconSettingsDomain = portalService.getIconSettiingInfo(companyUuid);
-                /*if (null != groupInfo || groupInfo.getGroupId().equals("0")) {
-                    //获取所有应用集合
-                    List<GroupApplicationModel> GroupApplicationList = portalService.selectNewApplicationList(groupInfo.getGroupId(), uuid);
-                    map.put("return_code", ReturnCode.SUCCESS);
-                    map.put("portalList", GroupApplicationList);
-                }*/
             map.put("IconSettingsDomain", iconSettingsDomain);
             map.put("isAdmin", domain.getIsAdmin());
             map.put("username", domain.getUserName());

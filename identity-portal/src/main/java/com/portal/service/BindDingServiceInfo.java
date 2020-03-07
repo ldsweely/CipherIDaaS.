@@ -26,7 +26,7 @@ public interface BindDingServiceInfo {
 
     boolean insertBindDing(BindingDingInfoDomain dingInfoDomain);
 
-    UserInfoDomain getUserByAccountNumber(String daiBaiId);
+    UserInfoDomain getUserByAccountNumber(String daiBaiId,String companyUuid);
 
     DaBaiBindingInfoDomain getDaBaiBindingInfo(String uuid);
 

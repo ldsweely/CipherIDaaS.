@@ -326,8 +326,8 @@ public class IdentityModesServiceImpl implements IdentityModesService {
     }
 
     @Override
-    public String obtainCopyright() {
-        return identityModesDAO.selectCopyright();
+    public String obtainCopyright(String companyUuid) {
+        return identityModesDAO.selectCopyright(companyUuid);
     }
 
     @Override

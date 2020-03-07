@@ -325,6 +325,7 @@
                from
                 cipher_user_info
               where
+                cipher_user_info.company_id=#{companyUuid} and
                 cipher_user_info.account_number =#{uuid}
                 or
                 phone_number = #{uuid}

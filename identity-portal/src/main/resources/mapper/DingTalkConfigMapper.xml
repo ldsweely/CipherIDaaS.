@@ -54,6 +54,7 @@
           cipher_ding_config_info.id = cipher_ding_scan_app_info.config_id
         where
           application = 'portal_sso'
+          and cipher_ding_config_info.companyUUid=#{companyId}
         limit 1
     </select>
 

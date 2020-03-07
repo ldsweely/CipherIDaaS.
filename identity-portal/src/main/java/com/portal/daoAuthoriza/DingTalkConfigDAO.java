@@ -2,6 +2,7 @@ package com.portal.daoAuthoriza;
 
 
 import com.portal.domain.DingTalkConfig;
+import org.apache.ibatis.annotations.Param;
 
 public interface DingTalkConfigDAO {
     /**
@@ -9,5 +10,5 @@ public interface DingTalkConfigDAO {
      * */
     DingTalkConfig getDingTalkConfigByCompanyId(String companyId);
 
-    DingTalkConfig getPortalDingConfig(String companyId);
+    DingTalkConfig getPortalDingConfig(@Param(value = "companyId") String companyId);
 }

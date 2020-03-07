@@ -81,7 +81,7 @@ public class RadiusPushAuthImpl implements RadiusPushAuth {
             return null;
         }
 
-        UserInfoDomain userInfo = userDAO.getUserInfo(userName);
+        UserInfoDomain userInfo = userDAO.getUserInfo(userName,configDomain.getCompanyId());
 
         if (userInfo == null) {
             logger.info("该用户不存在,user={}", userName);

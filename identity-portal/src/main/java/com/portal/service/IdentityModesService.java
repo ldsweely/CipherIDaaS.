@@ -27,7 +27,7 @@ public interface IdentityModesService {
 
     boolean isAuthComplete(AuthFlow authFlow,SecondLoginInfo secondLoginInfo);
 
-    String obtainCopyright();
+    String obtainCopyright(String companyUuid);
 
     IconSettingsDomain getIconSettingsByCompanyUuid(String companyUuid,Integer type);
 }

@@ -204,7 +204,7 @@ public class UserBindingController extends BaseController implements CookieListe
         }
 
         //获取个人信息
-        UserInfoDomain userInfoDomain = userInfoService.getUserInfo(accountNumber);
+        UserInfoDomain userInfoDomain = userInfoService.getUserInfo(accountNumber,companyUUid);
         setMapParam(map, Constants.USER_ID, userInfoDomain == null ? authResult.getUserName() : userInfoDomain.getUuid());
         return sendBaseNormalMap(map, ResultCode.SUCCESS);
     }

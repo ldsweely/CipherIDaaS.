@@ -83,7 +83,7 @@ public class IndexController extends  BaseController{
         PortalConfigDomain portalConfigDomain= identityModesService.getPortalConfig(companyUUid);
 
         //版权文案
-        String copyright = identityModesService.obtainCopyright();
+        String copyright = identityModesService.obtainCopyright(companyUUid);
 
         //页面图标和标题
         IconSettingsDomain iconSettingsByCompanyUuid = identityModesService.getIconSettingsByCompanyUuid(companyUUid, 2);

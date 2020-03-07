@@ -55,7 +55,7 @@
     </select>
 
     <select id="selectCopyright" resultType="string">
-        SELECT copyright FROM cipher_company_copyRight where id=1
+        SELECT copyright FROM cipher_company_copyRight where  company_id=#{companyUuid}
     </select>
 
     <select id="selectIconSettingsByCompanyUuid" resultMap="BaseResultMap">

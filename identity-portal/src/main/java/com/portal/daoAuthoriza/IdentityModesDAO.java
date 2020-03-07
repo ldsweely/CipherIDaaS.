@@ -27,7 +27,7 @@ public interface IdentityModesDAO {
      */
     PortalConfigDomain getPortalConfig(String companyUuid);
 
-    String selectCopyright();
+    String selectCopyright(@Param(value = "companyUuid") String companyUuid);
 
     IconSettingsDomain selectIconSettingsByCompanyUuid(@Param(value = "companyUuid") String companyUuid, @Param(value = "type") Integer type);
 }

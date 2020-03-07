@@ -23,6 +23,16 @@ public class SystemConfigInfo implements Serializable {
 
     private String samlLoginUrl;
 
+    private String companyUuid;
+
+    public String getCompanyUuid() {
+        return companyUuid;
+    }
+
+    public void setCompanyUuid(String companyUuid) {
+        this.companyUuid = companyUuid;
+    }
+
     public String getSamlLoginUrl() {
         return samlLoginUrl;
     }

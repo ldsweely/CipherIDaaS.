@@ -148,7 +148,7 @@ public class OidcController extends BaseController {
     @ResponseBody
     public Map<String, Object> doAtuhOidcAuthorize(
             @RequestParam(value = "applyId") String applyId,
-            @RequestParam(value = "companyUUid", defaultValue = "123456") String companyUuid,
+            @RequestParam(value = "companyUUid") String companyUuid,
             @RequestParam(value = "userId") String uuid,
             HttpServletResponse response) {
         if (applyId.isEmpty() || uuid.isEmpty()) {
@@ -306,7 +306,7 @@ public class OidcController extends BaseController {
     @ResponseBody
     public String doPortalAuthorize(
             @RequestParam(value = "applyId") String applyId,
-            @RequestParam(value = "companyUUid", defaultValue = "123456", required = false) String companyUuid,
+            @RequestParam(value = "companyUUid") String companyUuid,
             HttpServletRequest request) {
          String uuid = (String) request.getSession().getAttribute(Constants.USERNAME);
          logger.info("uuid-----------------"+uuid);
@@ -354,7 +354,7 @@ public class OidcController extends BaseController {
      */
     @RequestMapping(value = "doDsgConsoleAuthorize")
     @ResponseBody
-    public String doDsgConsoleAuthorize(@RequestParam(value = "companyUUid", defaultValue = "123456", required = false) String companyUuid,
+    public String doDsgConsoleAuthorize(@RequestParam(value = "companyUUid") String companyUuid,
                                        HttpServletRequest request, String applyId)  {
         String uuid = (String) request.getSession().getAttribute(Constants.USERNAME);
         Map<String, Object> map = new HashMap<String, Object>();
@@ -397,7 +397,7 @@ public class OidcController extends BaseController {
      */
     @RequestMapping(value = "doOtherConsoleAuthorize")
     @ResponseBody
-    public String doOtherConsoleAuthorize(HttpServletRequest request, @RequestParam(value = "companyUUid",defaultValue = "123456",required = false) String companyUUid, HttpServletResponse response) {
+    public String doOtherConsoleAuthorize(HttpServletRequest request, @RequestParam(value = "companyUUid") String companyUUid, HttpServletResponse response) {
         String newApplyUrl ="";
         try {
             String uuid = (String) request.getSession().getAttribute(Constants.USERNAME);

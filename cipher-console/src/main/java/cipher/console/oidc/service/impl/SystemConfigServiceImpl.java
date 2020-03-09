@@ -20,7 +20,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     private SystemConfigInfoMapper systemConfigInfoMapper;
 
     @Override
-    public SystemConfigInfo getSystemConfigInfo() {
-        return systemConfigInfoMapper.getSystemConfigInfo();
+    public SystemConfigInfo getSystemConfigInfo(String companyUuid) {
+        return systemConfigInfoMapper.getSystemConfigInfo(companyUuid);
     }
 }

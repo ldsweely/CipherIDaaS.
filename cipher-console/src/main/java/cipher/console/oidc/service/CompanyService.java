@@ -1,6 +1,7 @@
 package cipher.console.oidc.service;
 
 import cipher.console.oidc.domain.web.AdminUser;
+import cipher.console.oidc.domain.web.CompanyInfoDomain;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -22,4 +23,6 @@ public interface CompanyService {
     void insertCompanyInfo(AdminUser adminUser)throws Exception;
 
     void initData(String companyUUid);
+
+    String getCompanyByUuid(String companyUUid);
 }

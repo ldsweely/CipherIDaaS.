@@ -1,6 +1,8 @@
 package cipher.console.oidc.mapper;
 
+import cipher.console.oidc.domain.DataInitIdDomain;
 import cipher.console.oidc.domain.datainit.DingscanInitInfo;
+import cipher.console.oidc.domain.datainit.SystemInfoDataInitDomain;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -12,11 +14,11 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface DataInitMapper {
 
-    int dingDingConfigInitData(String companyUUid) throws Exception;
+    int dingDingConfigInitData(DataInitIdDomain dataInitIdDomain) throws Exception;
 
     void dingConfigAppInitData(DingscanInitInfo dingscanInitInfo) throws Exception;
 
-    int weixinConfigAppInitData(String companyUUid) throws Exception;
+    int weixinConfigAppInitData(DataInitIdDomain dataInitIdDomain) throws Exception;
 
     void weixinScanConfigAppInitData(@Param("comapanyUUid")String companyUUid,@Param("configId")String configId) throws Exception;
 
@@ -33,4 +35,6 @@ public interface DataInitMapper {
     void erpDataInit(String companyUUid) throws Exception;
 
     void doorPageEchoDataInit(String companyUUid) throws Exception;
+
+    void systemInfoDataInit(SystemInfoDataInitDomain systemInfoDataInitDomain);
 }

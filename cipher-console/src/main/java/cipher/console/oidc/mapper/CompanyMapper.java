@@ -1,6 +1,7 @@
 package cipher.console.oidc.mapper;
 
 import cipher.console.oidc.domain.web.AdminUser;
+import cipher.console.oidc.domain.web.CompanyInfoDomain;
 
 /**
  * TODO:
@@ -13,4 +14,6 @@ public interface CompanyMapper {
     String getCompanyUUid(String domain);
 
     void insertCompanyInfo(AdminUser adminUser) throws Exception;
+
+    String getCompanyByUuid(String companyUUid);
 }

@@ -3,7 +3,7 @@
 <mapper namespace="cipher.console.oidc.mapper.SystemConfigInfoMapper">
 
     <select id="getSystemConfigInfo" resultType="cipher.console.oidc.domain.web.SystemConfigInfo">
-     SELECT  *  FROM  cipher_system_config_info limit 1
+     SELECT  *  FROM  cipher_system_config_info where company_uuid=#{companyUuid} limit 1
     </select>
 
 

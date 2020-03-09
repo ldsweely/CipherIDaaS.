@@ -29,8 +29,7 @@ public enum  DataInitEnum {
 
     DOOR_CONFIG_SETTING("doorConfigSetting","doorPageEchoDataInitServiceImpl"),
 
-
-
+    SYSTEM_INFO_DATA_INIT("systemInfoDataInit","systemInfoDataInitServiceImpl"),
     ;
 
     DataInitEnum(String type, String impl) {

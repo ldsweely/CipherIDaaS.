@@ -829,6 +829,7 @@ public class AppController {
     @RequestMapping(value = "/imgUpload", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> imgUpload(@RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String companyId = sessionService.getCompanyUUid(request.getSession());
         logger.info("enter AppController.imgUpload;filename:" + file.getOriginalFilename());
         byte[] imgByte = file.getBytes();
         for (int i = 0; i < imgByte.length; ++i) {
@@ -843,7 +844,7 @@ public class AppController {
         int pointIndex = fileName.lastIndexOf(".");
         String endStr = fileName.substring(pointIndex);
         String imgName = simpleDateFormat.format(date) + endStr;
-        SystemConfigInfo systemConfigInfo = systemConfigService.getSystemConfigInfo();
+        SystemConfigInfo systemConfigInfo = systemConfigService.getSystemConfigInfo(companyId);
         //Boolean flag = uploadImg(imgProperties.getSaveDir(), imgName, imgByte);
         Boolean flag = uploadImg("/data/html/", imgName, imgByte);
         Map<String, Object> map = new HashMap<>();

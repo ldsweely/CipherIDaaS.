@@ -5,6 +5,7 @@ import cipher.console.oidc.domain.web.ApplicationInfo;
 import cipher.console.oidc.domain.web.ApplicationInfoDomain;
 import cipher.console.oidc.domain.web.SystemConfigInfo;
 import cipher.console.oidc.service.AppService;
+import cipher.console.oidc.service.SessionService;
 import cipher.console.oidc.service.SystemConfigService;
 import cipher.console.oidc.util.OpenSamlImplementation;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.security.SignatureException;
 import java.util.Date;
 
@@ -47,6 +49,9 @@ public class SamlController {
 
     @Autowired
     private AppService appService;
+
+    @Autowired
+    private SessionService sessionService;
     /**
      * 不需要修改的字段
      */
@@ -67,7 +72,7 @@ public class SamlController {
      */
     @RequestMapping("/metadata")
     @ResponseBody
-    public ResponseEntity<ByteArrayResource> metadata(String appId)
+    public ResponseEntity<ByteArrayResource> metadata(String appId,HttpServletRequest request)
             throws MarshallingException, SignatureException, SecurityException, org.opensaml.xmlsec.signature.support.SignatureException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -81,12 +86,13 @@ public class SamlController {
                 .ok()
                 .headers(headers)
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new ByteArrayResource(this.generateIDPMetadataXML(appId).getBytes()));
+                .body(new ByteArrayResource(this.generateIDPMetadataXML(appId,request).getBytes()));
 
 
     }
 
-    public String generateIDPMetadataXML(String appId) throws MarshallingException, org.opensaml.xmlsec.signature.support.SignatureException, SecurityException {
+    public String generateIDPMetadataXML(String appId, HttpServletRequest request) throws MarshallingException, org.opensaml.xmlsec.signature.support.SignatureException, SecurityException {
+        String companyId = sessionService.getCompanyUUid(request.getSession());
         EntityDescriptor entityDescriptor = openSamlImplementation.buildSAMLObject(EntityDescriptor.class);
         ApplicationInfoDomain applicationInfoDomain=new ApplicationInfoDomain();
         applicationInfoDomain.setId(Integer.valueOf(appId));
@@ -115,7 +121,7 @@ public class SamlController {
         singleSignOnService.setBinding(SAML2_POST_BINDING_URI);
         //本次接入这个URL不需要使用
 
-        SystemConfigInfo systemConfigInfo=systemConfigService.getSystemConfigInfo();
+        SystemConfigInfo systemConfigInfo=systemConfigService.getSystemConfigInfo(companyId);
         singleSignOnService.setLocation(systemConfigInfo.getPortalServerUrl() + "/cipher/saml/sso");
 
         idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);

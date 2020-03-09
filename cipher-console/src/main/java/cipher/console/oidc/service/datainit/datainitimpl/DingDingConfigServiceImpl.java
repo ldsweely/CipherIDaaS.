@@ -1,5 +1,6 @@
 package cipher.console.oidc.service.datainit.datainitimpl;
 
+import cipher.console.oidc.domain.DataInitIdDomain;
 import cipher.console.oidc.domain.datainit.DingscanInitInfo;
 import cipher.console.oidc.mapper.DataInitMapper;
 import cipher.console.oidc.mapper.DingConfigMapper;
@@ -27,9 +28,11 @@ public class DingDingConfigServiceImpl implements DataInitService {
 
     @Override
     public void init(String companyUUid) throws Exception {
+
+        DataInitIdDomain dataInitIdDomain=new DataInitIdDomain(companyUUid);
         //插入钉钉基本 配置
-        int configId=dataInitMapper.dingDingConfigInitData(companyUUid);
-        DingscanInitInfo dingscanInitInfo=new DingscanInitInfo(companyUUid,String.valueOf(configId));
+        int configId=dataInitMapper.dingDingConfigInitData(dataInitIdDomain);
+        DingscanInitInfo dingscanInitInfo=new DingscanInitInfo(companyUUid,String.valueOf(dataInitIdDomain.getId()));
         //插入钉钉回调配置
         dataInitMapper.dingConfigAppInitData(dingscanInitInfo);
     }

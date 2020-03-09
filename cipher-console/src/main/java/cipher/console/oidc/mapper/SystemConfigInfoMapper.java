@@ -12,5 +12,5 @@ import cipher.console.oidc.domain.web.SystemConfigInfo;
  */
 public interface SystemConfigInfoMapper {
 
-    public SystemConfigInfo getSystemConfigInfo();
+    public SystemConfigInfo getSystemConfigInfo(String companyUuid);
 }

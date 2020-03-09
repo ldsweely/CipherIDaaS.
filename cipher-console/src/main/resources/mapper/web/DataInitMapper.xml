@@ -3,10 +3,11 @@
 <mapper namespace="cipher.console.oidc.mapper.DataInitMapper">
 
 
-    <insert id="dingDingConfigInitData" useGeneratedKeys="true" keyProperty="id">
+    <insert id="dingDingConfigInitData" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="cipher.console.oidc.domain.DataInitIdDomain">
         INSERT INTO cipher_ding_config_info (companyUUid, scan_app_id, scan_app_secret, corp_id, corp_secret, app_key,
                                              app_secret, attr_map, match_rule, sync_config, create_time, modify_time)
-            VALUES (#{companyUUid}, 'dingoa8jgq8xffnrhk9rge',
+            VALUES (#{companyUuid} , 'dingoa8jgq8xffnrhk9rge',
                     'ES2Sb4xWT58Nca2M7A8K9WPNMWcHe36KOQ8UjH9l2rY0tnpv75yHLGf-5HYFg21u',
                     'ding832de0a4f88d8f5c35c2f4657eb6378f', '', 'dingsyioqlom4xouulms',
                     'vCDayVvf6ICLyc3dGuxlV4qUf7L-PLxYifikSOW1CeTErQjwL4StqIKU5GHP6XQ1',
@@ -63,12 +64,13 @@
                                                                     now());
 
     </insert>
-    <insert id="weixinConfigAppInitData" useGeneratedKeys="true" keyProperty="id">
+    <insert id="weixinConfigAppInitData" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="cipher.console.oidc.domain.DataInitIdDomain">
         INSERT INTO cipher_wx_config_info (corp_id, agent_id, corp_secret, companyUUid, match_rule, callback_url,
                                            sync_config, attr_map, create_time,
                                            modify_time) VALUES ('ww53bb96493d6bd959', '1000004',
                                                                 '3vKe7YGYs0CATC7_9AjBKSt73_nHxHjy42ovgAFRuZA',
-                                                                #{comapanyUUid}, 3,
+                                                                #{companyUuid}, 3,
                                                                 'http://portal.cipherchina.com:8645',
                                                                 '{"isAutoSync":1,"autoSyncDate":"00:00:00","interval":4}',
                                                                 '[{"localKey":"accountNumber","wxKey":"mobile"},{"localKey":"userName","wxKey":"name"},{"localKey":"mail","wxKey":"email"},{"localKey":"phoneNumber","wxKey":"mobile"},{"localKey":"job","wxKey":"position"}]',
@@ -130,27 +132,70 @@
                                                                   10, now(), now());
 
     </select>
-    <select id="emailConfigDataInit" >
+    <select id="emailConfigDataInit">
         INSERT INTO cipher_email_config (company_uuid, smtp, port, title, dredge_title, seedkey_title, account, pwd,
                                          describes, service_state, dredge_describes, seedkey_describes, isSSL,
                                          send_time, interval_time, effective_time, extend_time, create_time,
-                                         modify_time) VALUES ( #{companyUUid} , 'smtp.exmail.qq.com', 465, '赛赋随机码', '开通账号',
+                                         modify_time) VALUES (#{companyUUid}, 'smtp.exmail.qq.com', 465, '赛赋随机码',
+                                                              '开通账号',
                                                               '【赛赋科技】请绑定动态密码的通知', 'test000@cipherchina.com',
                                                               'Cipher2018!', '尊敬的用户,您的邮箱验证码为{code}', 0,
                                                               '欢迎加入杭州赛赋科技有限公司！\n\n您已经成功加入杭州赛赋科技有限公司\n管理员已经为您开通了企业账号，首次登陆后重置密码。\n\n账号：{account}\n密码：{password}\n\n企业登录门户链接：www.cipherchina.com',
                                                               '你好！\n\nIT管理员根据公司的安全要求，已启用了双因素动态密码认证。\n请各位员工用户使用微信小程序「赛赋认证器」扫描下方二维码，绑定动态密码。\n\n{QR Code}\n\n请保存好该二维码，以免泄露。\n如有问题请联系IT管理员。',
-                                                              1, 4, 3, 3, 3,now(),
+                                                              1, 4, 3, 3, 3, now(),
                                                               now());
 
     </select>
-    <select id="erpDataInit" >
-        INSERT INTO cipher_mantis_erp (name,src,company_id) VALUES ('test', 'http://mobile.goldmantis.com:7090', #{companyUUid} );
+    <select id="erpDataInit">
+        INSERT INTO cipher_mantis_erp (name, src, company_id) VALUES ('test', 'http://mobile.goldmantis.com:7090', #{companyUUid});
     </select>
-    <select id="doorPageEchoDataInit" >
-        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES (#{companyUUid} , 2, '赛赋统一身份认证平台', 'CipherChina智慧互联', '赛赋认证服务', 'http://101.132.145.69/20190819171712.png', 'http://139.196.143.107/20191203184435.png', now(),now());
-        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES ( #{companyUUid}, 3, 'CipherChina Technology', "", "", 'http://101.132.145.69/20191202195147.png', "",now(),now());
-        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES ( #{companyUUid}, 1, '中上标题', '左上标题', '中下标题', 'http://192.168.1.171/20190520152840.png', "", now(),now());
-        INSERT INTO cipher_interface_config (company_uuid,type,title,left_title,right_title,iconfont_img_url,logo_img_url,create_time,modify_time) VALUES ( #{companyUUid}, 4, '赛赋统一身份认证平台', "", "", 'http://139.196.143.107/20191203184905.ico', "", now(),now());
+    <select id="doorPageEchoDataInit">
+        INSERT INTO cipher_interface_config (company_uuid, type, title, left_title, right_title, iconfont_img_url,
+                                             logo_img_url, create_time, modify_time) VALUES (#{companyUUid}, 2,
+                                                                                             '赛赋统一身份认证平台',
+                                                                                             'CipherChina智慧互联',
+                                                                                             '赛赋认证服务',
+                                                                                             'http://101.132.145.69/20190819171712.png',
+                                                                                             'http://139.196.143.107/20191203184435.png',
+                                                                                             now(), now());
+        INSERT INTO cipher_interface_config (company_uuid, type, title, left_title, right_title, iconfont_img_url,
+                                             logo_img_url, create_time, modify_time) VALUES (#{companyUUid}, 3,
+                                                                                             'CipherChina Technology',
+                                                                                             "", "",
+                                                                                             'http://101.132.145.69/20191202195147.png',
+                                                                                             "", now(), now());
+        INSERT INTO cipher_interface_config (company_uuid, type, title, left_title, right_title, iconfont_img_url,
+                                             logo_img_url, create_time, modify_time) VALUES (#{companyUUid}, 1, '中上标题',
+                                                                                             '左上标题', '中下标题',
+                                                                                             'http://192.168.1.171/20190520152840.png',
+                                                                                             "", now(), now());
+        INSERT INTO cipher_interface_config (company_uuid, type, title, left_title, right_title, iconfont_img_url,
+                                             logo_img_url, create_time, modify_time) VALUES (#{companyUUid}, 4,
+                                                                                             '赛赋统一身份认证平台', "", "",
+                                                                                             'http://139.196.143.107/20191203184905.ico',
+                                                                                             "", now(), now());
+    </select>
+    <select id="systemInfoDataInit" parameterType="cipher.console.oidc.domain.datainit.SystemInfoDataInitDomain">
+        INSERT INTO cipher_system_config_info (ip, device_name, dsg_server_url, console_url, console_redirect_url,
+                                               expire_time, image_host, cas_server_auth_url, rdsg_server_auth_url,
+                                               saml_login_url, rdsg_server_url, binding_account_url,
+                                               redirect_portal_url, portal_server_url, compnay_uuid) VALUES (
+                                                                                                             #{ip},
+                                                                                                             #{deviceName},
+                                                                                                             #{dsgServerUrl},
+                                                                                                             #{consoleUrl},
+                                                                                                             #{consoleRedirectUrl},
+                                                                                                             #{expireTime},
+                                                                                                             #{imageHost},
+                                                                                                             #{casServerAuthUrl},
+                                                                                                             #{rdsgServerAuthUrl},
+                                                                                                             #{samlLoginUrl},
+                                                                                                             #{rdsgServerUrl},
+                                                                                                             #{bindingAccountUrl},
+                                                                                                             #{redirectPortalUrl},
+                                                                                                             #{portalServerUrl},
+                                                                                                             #{companyUuid});
+
     </select>
 
 </mapper>

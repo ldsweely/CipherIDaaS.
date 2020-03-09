@@ -1,6 +1,7 @@
 package cipher.console.oidc.service.impl;
 
 import cipher.console.oidc.domain.web.AdminUser;
+import cipher.console.oidc.domain.web.CompanyInfoDomain;
 import cipher.console.oidc.mapper.AuthStrategyMapper;
 import cipher.console.oidc.mapper.CompanyMapper;
 import cipher.console.oidc.service.CompanyService;
@@ -57,6 +58,12 @@ public class CompanyServiceImpl implements CompanyService {
     public void initData(String companyUUid) {
         dataInitService.sendBaseInfo(companyUUid);
     }
+
+    @Override
+    public String getCompanyByUuid(String companyUUid) {
+        return companyMapper.getCompanyByUuid(companyUUid);
+    }
+
     void insertIdentity(String companyUUid) throws Exception{
             authStrategyMapper.dataInsert(companyUUid);
     }

@@ -1,5 +1,6 @@
 package cipher.console.oidc.service.datainit.datainitimpl;
 
+import cipher.console.oidc.domain.DataInitIdDomain;
 import cipher.console.oidc.domain.datainit.DingscanInitInfo;
 import cipher.console.oidc.mapper.DataInitMapper;
 import cipher.console.oidc.service.datainit.DataInitService;
@@ -26,10 +27,13 @@ public class WeixinConfigInitData implements DataInitService {
 
     @Override
     public void init(String companyUUid) throws Exception {
+
+        DataInitIdDomain dataInitIdDomain=new DataInitIdDomain(companyUUid);
+
         //插入微信基本 配置
-        int configId=dataInitMapper.weixinConfigAppInitData(companyUUid);
+        int configId=dataInitMapper.weixinConfigAppInitData(dataInitIdDomain);
 
         //插入微信回调配置
-        dataInitMapper.weixinScanConfigAppInitData(companyUUid,String.valueOf(configId));
+        dataInitMapper.weixinScanConfigAppInitData(companyUUid,String.valueOf(dataInitIdDomain.getId()));
     }
 }

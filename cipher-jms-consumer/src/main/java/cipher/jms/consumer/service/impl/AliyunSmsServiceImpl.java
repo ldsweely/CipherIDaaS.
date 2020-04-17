@@ -34,15 +34,6 @@ import java.util.Map;
 @Service
 public class AliyunSmsServiceImpl implements AliyunSmsService{
 
-    //产品名称:云通信短信API产品,开发者无需替换
-    private static final String product = "Dysmsapi";
-    //产品域名,开发者无需替换
-    private static final String domain = "dysmsapi.aliyuncs.com";
-    private static final String accessKeyId = "LTAIjAxSJ5U1QocB";
-    private static final String accessKeySecret = "1npJ5LnLrXmefz5royDIQlOlly0iXy";
-    private static  final String templeteCode="SMS_153990932";
-    private static final String signName="赛赋科技";
-    private  int   ttl        = 300;   // 单位秒
 
 
     private static final Logger logger     = LoggerFactory.getLogger(AliyunSmsServiceImpl.class);
@@ -366,37 +357,6 @@ public class AliyunSmsServiceImpl implements AliyunSmsService{
         String strArray=array.toString();
         System.out.println("strJson:"+strJson);
         System.out.println("strArray:"+strArray);
-    }
-
-    public static void main(String arg[]){
-       //convertObject();
-
-        AliyunSmsConfigInfo aliyunSmsConfigInfo=new AliyunSmsConfigInfo();
-        aliyunSmsConfigInfo.setAccessKeyId("LTAItbCnFw7L5dFr");
-        aliyunSmsConfigInfo.setAccessKeySecret("IjOgtvuNAaTBBxHiCtfWLIeyiICD5G");
-        aliyunSmsConfigInfo.setDomain(domain);
-        aliyunSmsConfigInfo.setProduct(product);
-        aliyunSmsConfigInfo.setSignName("众合科技身份认证平台");
-        aliyunSmsConfigInfo.setTemplateCode("SMS_170346766");
-        //发短信
-        SendSmsResponse response = null;
-        try {
-            response = sendAliSmsCode("13799155488","123456",aliyunSmsConfigInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("短信接口返回的数据----------------");
-        System.out.println("Code=" + response.getCode());
-        System.out.println("Message=" + response.getMessage());
-        System.out.println("RequestId=" + response.getRequestId());
-        System.out.println("BizId=" + response.getBizId());
-
-        try {
-            Thread.sleep(3000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 
 }
